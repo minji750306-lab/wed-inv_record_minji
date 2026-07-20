@@ -286,7 +286,7 @@ header h1 span{color:var(--sage)}
       <a class="b2" id="openResult" target="_blank" rel="noopener">새 창에서 열기</a>
     </div>
   </div>
-  <div class="pagefoot"><a id="pageCredit" target="_blank" rel="noopener"></a></div>
+  <div class="pagefoot"><span id="pageCredit"></span><a id="pageCreditLink" target="_blank" rel="noopener"></a></div>
 </div>
 
 <div class="bottombar">
@@ -325,8 +325,12 @@ const CREDIT_LINK_LABEL = '🔑 Naver Blog';  /* ← 링크 줄에 표시될 글
   }
   const pc=document.getElementById('pageCredit');
   pc.textContent=CREDIT_TEXT;
-  if(CREDIT_URL){pc.href=CREDIT_URL;}
-  else{const sp=document.createElement('span');sp.textContent=CREDIT_TEXT;pc.replaceWith(sp);}
+  const pl=document.getElementById('pageCreditLink');
+  if(CREDIT_URL){
+    pl.href=CREDIT_URL;
+    pl.textContent=CREDIT_LINK_LABEL;
+    pl.style.cssText='display:block;margin-top:3px;color:#C9A6AE';
+  }else{pl.remove();}
 }
 const IDS=['groom','bride','groomEn','brideEn','groomP','brideP','groomOrder','brideOrder',
 'date','time','venue','hall','addr','lead','inviteTitle','galTitle','msg','footMsg',
