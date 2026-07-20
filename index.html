@@ -181,6 +181,11 @@ header h1 span{color:var(--sage)}
   <div class="card">
     <h2><em>3.</em>사진 <small>· 클릭하거나 끌어다 놓으면 업로드돼요</small></h2>
     <div class="f">
+      <label>표지 디자인</label>
+      <div class="preset" id="heroStyles"></div>
+      <input id="heroStyle" type="hidden" value="classic">
+    </div>
+    <div class="f">
       <label>상단 메인(표지) 사진 <small>1장 · 규격에 맞게 조정할 수 있어요.</small></label>
       <div class="upzone" id="heroZone">표지 사진 선택하기</div>
       <input type="file" id="heroFile" accept="image/*" hidden>
@@ -273,6 +278,10 @@ header h1 span{color:var(--sage)}
       <div class="slugrow"><span id="baseUrl"></span><input id="slug" placeholder="cheolsu-younghee" autocapitalize="off" autocomplete="off"></div>
     </div>
     <div class="f">
+      <label>🎟️초대 코드 (필수) <small>발급받은 코드를 입력하세요 · (코드 1개당 청첩장 1개, 수정은 무제한</small></label>
+      <input id="inviteCode" autocomplete="off" placeholder="예: MJ-A1B2C3" style="text-transform:uppercase">
+    </div>
+    <div class="f">
       <label>🔒수정 비밀번호 <small>4자 이상 · 다른 곳에서 쓰는 비밀번호 말고 간단한 숫자·단어로 정하세요. 수정 시 필요하니 꼭 기억하세요!</small></label>
       <input id="editKey" type="text" autocomplete="off" name="edit-code" placeholder="예: 20261024">
     </div>
@@ -332,7 +341,7 @@ const c=document.getElementById('credit');
 }
 const IDS=['groom','bride','groomEn','brideEn','groomP','brideP','groomOrder','brideOrder',
 'date','time','venue','hall','addr','lead','inviteTitle','galTitle','msg','footMsg',
-'subway','bus','car','charter','slug','editKey','deleteDate'];
+'subway','bus','car','charter','subway','bus','car','charter','slug','editKey','deleteDate','inviteCode','heroStyle'];
 const $=id=>document.getElementById(id);
 const toastEl=$('toast');let tt;
 function toast(m){toastEl.textContent=m;toastEl.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove('on'),3000);}
@@ -392,6 +401,23 @@ const PRESETS=[
   ['테라코타','#3A241A','#FAF3EC','#C4785A','#D8B49C'],
   ['모던 블랙','#1E1E1E','#F7F6F3','#B9A47C','#B8B8B0']
 ];
+  const HERO_STYLES=[['classic','클래식 · 전체사진'],['arch','아치형'],['frame','액자형'],['mag','매거진형']];
+const hw=$('heroStyles');
+HERO_STYLES.forEach(([v,label])=>{
+  const b=document.createElement('button');
+  b.type='button';b.textContent=label;b.dataset.v=v;
+  b.addEventListener('click',()=>{
+    $('heroStyle').value=v;
+    hw.querySelectorAll('button').forEach(x=>x.style.cssText='');
+    b.style.cssText='background:var(--ink);color:#fff;border-color:var(--ink)';
+    save();
+  });
+  hw.appendChild(b);
+});
+function markHeroStyle(){
+  hw.querySelectorAll('button').forEach(x=>x.style.cssText=x.dataset.v===$('heroStyle').value?'background:var(--ink);color:#fff;border-color:var(--ink)':'');
+}
+markHeroStyle();
 const pw=$('presets');
 PRESETS.forEach(([name,ink,cream,gold,sage])=>{
   const b=document.createElement('button');
@@ -427,7 +453,7 @@ function compress(file){
 async function uploadFile(file){
   const dataUrl=await compress(file);
   const r=await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({dataUrl,name:file.name})});
+    body:JSON.stringify({dataUrl,name:file.name,code:$('inviteCode').value})});
   const j=await r.json();
   if(!r.ok)throw new Error(j.error||'업로드 실패');
   return j.url;
@@ -514,7 +540,7 @@ function applyCrop(){
     wrap.appendChild(t);
     try{
       const r=await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({dataUrl,name:'hero.jpg'})});
+        body:JSON.stringify({dataUrl,name:'hero.jpg',code:$('inviteCode').value})});
       const j=await r.json();
       if(!r.ok)throw new Error(j.error||'업로드 실패');
       t.remove();
@@ -615,6 +641,7 @@ IDS.forEach(id=>$(id).addEventListener('input',save));
   (d.accG&&d.accG.length?d.accG:[null]).forEach(v=>addAccRow('accG',v));
   (d.accB&&d.accB.length?d.accB:[null]).forEach(v=>addAccRow('accB',v));
   syncDeleteRange();
+  markHeroStyle();
 })();
 renderPreview();
 
@@ -641,7 +668,7 @@ $('makeBtn').addEventListener('click',async()=>{
   const btn=$('makeBtn');btn.disabled=true;btn.textContent='만드는 중…';
   try{
     const r=await fetch('/api/create',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({slug:d.slug,editKey:d.editKey,data:d})});
+      body:JSON.stringify({slug:d.slug,editKey:d.editKey,code:d.inviteCode,data:d})});
     const j=await r.json();
     if(!r.ok)throw new Error(j.error||'저장에 실패했어요');
     const url=`${location.origin}/${d.slug}`;
