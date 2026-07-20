@@ -11,7 +11,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>모바일 청첩장 에디터</title>
+<title>모바일 청첩장 생성기</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✒️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -133,7 +133,7 @@ header h1 span{color:var(--sage)}
 <div class="wrap">
   <header>
     <div>
-      <h1>💗 모바일 청첩장 <span>생성기</span></h1>
+      <h1>💌 모바일 청첩장 <span>생성기</span></h1>
       <p class="credit" id="credit"></p>
     </div>
   </header>
@@ -169,13 +169,13 @@ header h1 span{color:var(--sage)}
       <div class="f"><label>예식장 이름</label><input id="venue" placeholder="(예시) OO웨딩홀"></div>
       <div class="f"><label>층 · 홀 이름</label><input id="hall" placeholder="(예시) 3층 그랜드볼룸"></div>
     </div>
-    <div class="f"><label>도로명 주소 입력 (필수) <small>지도 앱 버튼에 자동 연결돼요</small></label><input id="addr" placeholder="OO시 OO구 OO로 123"></div>
+    <div class="f"><label>도로명 주소 입력 <small>지도 앱 버튼에 자동 연결돼요</small></label><input id="addr" placeholder="OO시 OO구 OO로 123"></div>
   </div>
 
   <div class="card">
     <h2><em>3.</em>사진 <small>· 클릭하거나 끌어다 놓으면 업로드돼요</small></h2>
     <div class="f">
-      <label>상단 메인(표지) 사진 <small>1장 · 세로형 4:5 규격으로 잘라서 저장돼요</small></label>
+      <label>상단 메인(표지) 사진 <small>1장 · 규격에 맞게 조정할 수 있어요.</small></label>
       <div class="upzone" id="heroZone">📷 표지 사진 선택하기</div>
       <input type="file" id="heroFile" accept="image/*" hidden>
       <div class="thumbs" id="heroThumb"></div>
@@ -198,7 +198,7 @@ header h1 span{color:var(--sage)}
       <input id="galTitle" placeholder="(예시) 우리의 순간들"></div>
     <div class="f"><label>초대 말씀</label>
       <textarea id="msg" style="min-height:150px" placeholder="(예시) 서로 다른 두 사람이 만나&#10;하나의 길을 걸어가려 합니다.&#10;&#10;귀한 걸음 하시어&#10;저희의 시작을 축복해 주세요."></textarea></div>
-    <div class="f"><label>맺음 문구 <small>맨 아래에 표시 · 비워도 됩니다</small></label>
+    <div class="f"><label>맺음 문구 <small>맨 아래에 표시돼요.</small></label>
       <textarea id="footMsg" placeholder="(예시) 함께해 주셔서 감사합니다."></textarea></div>
   </div>
 
@@ -272,7 +272,7 @@ header h1 span{color:var(--sage)}
       <input id="editKey" type="text" placeholder="예: 20261024">
     </div>
     <div class="f">
-      <label>🗓️정보 삭제 희망일 (필수) <small>생성일 기준 최대 12개월 · 처음 정한 날짜는 이후 수정으로 변경할 수 없어요</small></label>
+      <label>🗓️정보 삭제 희망일 <small>생성일 기준 최대 12개월 · 처음 정한 날짜는 이후 수정으로 변경할 수 없어요</small></label>
       <input id="deleteDate" type="date">
     </div>
   </div>
