@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<!--
+  📄 index.html — 청첩장 에디터 (최종 버전)
+  · 사진 파일 직접 업로드 (자동 압축 후 저장소에 보관)
+  · 섹션 문구 · 컬러 커스텀
+  · 원하는 짧은 주소로 청첩장 생성 (예: /i.html?id=minsu-younghee)
+  · 정보 삭제 희망일 필수 (예식일 다음날 ~ 최대 12개월)
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>모바일 청첩장 에디터</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✒️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#4A3238;--sage:#C08A96;--sage-lt:#F3E2E6;--cream:#FAF5F4;
+  --line:#EBDCDE;--white:#fff;--gold:#C9A68A;--red:#B0765E;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--ink);padding-bottom:120px}
+.wrap{max-width:760px;margin:0 auto;padding:28px 18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+header h1{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:500}
+header h1 span{color:var(--sage)}
+  .credit{font-size:11.5px;color:#B9A8AC;font-weight:300;margin-top:5px;letter-spacing:.04em}
+.guide{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:24px;font-size:13.5px;line-height:2}
+.guide b{color:var(--sage)}
+.guide .tip{color:#8a8f83;font-size:12.5px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:24px 22px;margin-bottom:20px}
+.card h2{font-size:15px;font-weight:700;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--sage-lt)}
+.card h2 em{font-style:normal;color:var(--sage);margin-right:6px}
+.card h2 small{font-weight:300;color:#8a8f83}
+.f{margin-bottom:16px}
+.f label{display:block;font-size:13px;font-weight:500;margin-bottom:7px}
+.f label small{font-weight:300;color:#8a8f83;margin-left:6px}
+.f input,.f textarea,.f select{
+  width:100%;border:1px solid var(--line);border-radius:9px;padding:12px 14px;font-size:14px;
+  font-family:inherit;background:var(--cream);color:var(--ink);
+}
+.f input:focus,.f textarea:focus{outline:2px solid var(--sage);border-color:transparent;background:#fff}
+.f textarea{resize:vertical;min-height:96px;line-height:1.9}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+.acc-rows{display:flex;flex-direction:column;gap:10px}
+.acc-row{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px}
+.acc-row input{border:1px solid var(--line);border-radius:9px;padding:11px 12px;font-size:13.5px;font-family:inherit;background:var(--cream)}
+.addbtn{margin-top:10px;border:1px dashed var(--sage);background:none;color:var(--sage);border-radius:9px;padding:10px;font-size:13px;cursor:pointer;font-family:inherit;width:100%}
+/* 사진 업로드 */
+.upzone{border:1.5px dashed var(--sage);border-radius:12px;background:var(--cream);padding:20px;text-align:center;cursor:pointer;font-size:13.5px;color:#6a7062}
+.upzone:hover{background:#f1f2ea}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-top:12px}
+.thumb{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--sage-lt)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb .del{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(30,36,28,.75);color:#fff;font-size:12px;cursor:pointer;line-height:1}
+.thumb .spin{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.6);font-size:11px;color:var(--ink)}
+.thumb.hero-mark::after{content:"표지";position:absolute;left:4px;bottom:4px;background:var(--gold);color:#fff;font-size:10px;padding:2px 7px;border-radius:99px}
+/* 컬러 */
+.colors{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:560px){.colors{grid-template-columns:1fr}}
+.crow{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--cream)}
+.crow label{flex:1;font-size:13px}
+.crow label small{display:block;font-weight:300;color:#8a8f83;font-size:11.5px;margin-top:2px}
+.crow input[type=color]{width:42px;height:34px;border:0;background:none;cursor:pointer;padding:0}
+.crow input[type=text]{width:88px;border:1px solid var(--line);border-radius:7px;padding:7px 8px;font-size:12.5px;font-family:monospace;text-transform:uppercase}
+.preset{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.preset button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
+.preset .dot{width:12px;height:12px;border-radius:50%}
+/* 주소 */
+.slugrow{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:9px;background:var(--cream);overflow:hidden}
+.slugrow span{font-size:12.5px;color:#8a8f83;padding:0 0 0 12px;white-space:nowrap}
+.slugrow input{border:0;background:none;flex:1;padding:12px 12px 12px 4px;font-size:14px;font-family:monospace;min-width:0}
+.slugrow input:focus{outline:none}
+/* 결과 */
+.result{background:var(--ink);color:#fff;border-radius:14px;padding:24px 22px;display:none}
+.result.on{display:block}
+.result h2{font-size:15px;margin-bottom:12px}
+.result p{font-size:13px;line-height:2;opacity:.85;margin-bottom:14px}
+.result .url{background:rgba(255,255,255,.1);border-radius:9px;padding:13px 14px;font-size:13.5px;word-break:break-all;line-height:1.7;margin-bottom:14px;font-family:monospace}
+.result .btns{display:flex;gap:8px;flex-wrap:wrap}
+.result .btns button,.result .btns a{border:0;border-radius:999px;padding:11px 20px;font-size:13.5px;font-weight:500;cursor:pointer;text-decoration:none;font-family:inherit}
+.result .b1{background:var(--gold);color:var(--ink)}
+.result .b2{background:rgba(255,255,255,.14);color:#fff}
+#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(16px);background:rgba(30,36,28,.92);color:#fff;padding:12px 22px;border-radius:999px;font-size:13.5px;opacity:0;pointer-events:none;transition:.3s;z-index:9;max-width:88vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%)}
+.bottombar{position:fixed;left:0;right:0;bottom:0;background:rgba(247,246,241,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:12px 18px calc(12px + env(safe-area-inset-bottom))}
+.bottombar .in{max-width:760px;margin:0 auto;display:flex;gap:8px}
+.bottombar button{flex:1;border:0;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+#makeBtn{background:var(--ink);color:#fff}
+#makeBtn:disabled{opacity:.6}
+#previewBtn{flex:0.6;background:#fff;border:1px solid var(--line);color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>💗 모바일 청첩장 <span>생성기</span></h1>
+      <p class="credit" id="credit"></p>
+    </div>
+  </header>
+
+  <div class="guide">
+    <b>How to use?</b><br>
+    1. 아래 내용을 채워주세요.<br>
+    2. 사진은 <b>파일을 직접 업로드</b>해주세요.<br>
+    3. 입력한 내용은 <b>설정한 날짜 이후에 모두 삭제</b>되니 안심하세요.<br>
+    4. 마지막에 <b>원하는 주소와 수정 비밀번호</b>를 정하고 <b>💌 청첩장 만들기</b>를 누르면 짧은 링크가 완성!<br>
+    <span class="tip">✏️ 나중에 수정하려면: 8번에서 같은 주소 + 같은 수정 비밀번호로 다시 만들면 내용이 덮어써져요.</span>
+  </div>
+
+  <div class="card">
+    <h2><em>1.</em>신랑 · 신부</h2>
+    <div class="grid2">
+      <div class="f"><label>신랑 이름</label><input id="groom" placeholder="김신랑"></div>
+      <div class="f"><label>신부 이름</label><input id="bride" placeholder="이신부"></div>
+      <div class="f"><label>신랑 영문 이름 <small>비우면 한글 이름 표시</small></label><input id="groomEn" placeholder="Sin Rang"></div>
+      <div class="f"><label>신부 영문 이름 <small>비우면 한글 이름 표시</small></label><input id="brideEn" placeholder="Sin Bu"></div>
+      <div class="f"><label>신랑 부모님 성함 <small>선택사항 </small></label><input id="groomP" placeholder="김OO·박OO"></div>
+      <div class="f"><label>신부 부모님 성함 <small>선택사항 </small></label><input id="brideP" placeholder="김OO·박OO"></div>
+      <div class="f"><label>신랑 관계 <small>(예시) 장남, 차남, 아들</small></label><input id="groomOrder" placeholder="장남"></div>
+      <div class="f"><label>신부 관계 <small>(예시) 장녀, 차녀, 딸</small></label><input id="brideOrder" placeholder="장녀"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><em>2.</em>예식 일시 · 장소</h2>
+    <div class="grid2">
+      <div class="f"><label>예식 날짜</label><input id="date" type="date"></div>
+      <div class="f"><label>예식 시간</label><input id="time" type="time" value="12:00"></div>
+      <div class="f"><label>예식장 이름</label><input id="venue" placeholder="(예시) OO웨딩홀"></div>
+      <div class="f"><label>층 · 홀 이름</label><input id="hall" placeholder="(예시) 3층 그랜드볼룸"></div>
+    </div>
+    <div class="f"><label>도로명 주소 입력 <small>지도 앱 버튼에 자동 연결돼요</small></label><input id="addr" placeholder="OO시 OO구 OO로 123"></div>
+  </div>
+
+  <div class="card">
+    <h2><em>3.</em>사진 <small>· 클릭하거나 끌어다 놓으면 업로드돼요</small></h2>
+    <div class="f">
+      <label>상단 메인(표지) 사진 <small>1장</small></label>
+      <div class="upzone" id="heroZone">📷 표지 사진 선택하기</div>
+      <input type="file" id="heroFile" accept="image/*" hidden>
+      <div class="thumbs" id="heroThumb"></div>
+    </div>
+    <div class="f">
+      <label>갤러리 사진 <small>여러 장 선택 가능</small></label>
+      <div class="upzone" id="galZone">🖼 갤러리 사진 선택하기</div>
+      <input type="file" id="galFile" accept="image/*" multiple hidden>
+      <div class="thumbs" id="galThumbs"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><em>4.</em>문구 <small>· 선택사항</small></h2>
+    <div class="f"><label>표지 감성 문구 <small>2~3줄 짧게</small></label>
+      <textarea id="lead" placeholder="(예시) 서로의 계절을 지나&#10;같은 봄에 도착했습니다"></textarea></div>
+<div class="f"><label>초대 섹션 제목</label>
+      <input id="inviteTitle" placeholder="(예시) 소중한 분들을 초대합니다"></div>
+    <div class="f"><label>갤러리 섹션 제목</label>
+      <input id="galTitle" placeholder="(예시) 우리의 순간들"></div>
+    <div class="f"><label>초대 말씀</label>
+      <textarea id="msg" style="min-height:150px" placeholder="(예시) 서로 다른 두 사람이 만나&#10;하나의 길을 걸어가려 합니다.&#10;&#10;귀한 걸음 하시어&#10;저희의 시작을 축복해 주세요."></textarea></div>
+    <div class="f"><label>맺음 문구 <small>맨 아래에 표시 · 비워도 됩니다</small></label>
+      <textarea id="footMsg" placeholder="(예시) 함께해 주셔서 감사합니다."></textarea></div>
+  </div>
+
+  <div class="card">
+    <h2><em>5.</em>컬러 <small>· 색상표를 누르거나 컬러코드(#으로 시작)를 직접 입력하세요</small></h2>
+    <div class="preset" id="presets"></div>
+    <div class="colors">
+      <div class="crow">
+        <input type="color" id="cInk" value="#2E3A2C"><input type="text" id="cInkT" value="#2E3A2C">
+        <label>메인 컬러<small>진한 배경 · 글자색</small></label>
+      </div>
+      <div class="crow">
+        <input type="color" id="cCream" value="#F6F4EC"><input type="text" id="cCreamT" value="#F6F4EC">
+        <label>배경 컬러<small>밝은 바탕색</small></label>
+      </div>
+      <div class="crow">
+        <input type="color" id="cGold" value="#C0A97E"><input type="text" id="cGoldT" value="#C0A97E">
+        <label>포인트 컬러<small>장식선 · 강조</small></label>
+      </div>
+      <div class="crow">
+        <input type="color" id="cSage" value="#A8B096"><input type="text" id="cSageT" value="#A8B096">
+        <label>보조 컬러<small>꽃잎 · 옅은 글자</small></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><em>6.</em>교통편 <small>· 비워둔 항목은 표시되지 않아요.</small></h2>
+    <div class="f"><label>지하철</label><textarea id="subway" placeholder="(예시) 2호선 OO역 3번 출구 도보 5분"></textarea></div>
+    <div class="f"><label>버스</label><textarea id="bus" placeholder="(예시) OO정류장 하차 (100, 200, 300번)"></textarea></div>
+    <div class="f"><label>자가용 · 주차</label><textarea id="car" placeholder="(예시) 내비게이션에 'OO웨딩홀' 검색&#10;건물 주차장 2시간 무료"></textarea></div>
+    <div class="f"><label>전세버스</label><textarea id="charter" placeholder="(예시) 출발지: OO / 출발 시간: 10:30"></textarea></div>
+  </div>
+
+  <div class="card">
+    <h2><em>7.</em>마음 전하실 곳 <small>· 비워둔 항목은 표시되지 않아요.</small></h2>
+    <div class="f"><label>신랑측 계좌 <small>예금주 / 은행 / 계좌번호</small></label>
+      <div class="acc-rows" id="accG"></div>
+      <button class="addbtn" data-side="accG">+ 신랑측 계좌 추가</button>
+    </div>
+    <div class="f"><label>신부측 계좌</label>
+      <div class="acc-rows" id="accB"></div>
+      <button class="addbtn" data-side="accB">+ 신부측 계좌 추가</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><em>8.</em>청첩장 주소 만들기</h2>
+    <div class="f">
+      <label>🔗원하는 주소 <small>영문 소문자·숫자·하이픈(-)만</small></label>
+      <div class="slugrow"><span id="baseUrl"></span><input id="slug" placeholder="cheolsu-younghee" autocapitalize="off" autocomplete="off"></div>
+    </div>
+    <div class="f">
+      <label>🔒수정 비밀번호 <small>4자 이상 · 나중에 내용을 고칠 때 필요해요. 꼭 기억하세요!</small></label>
+      <input id="editKey" type="text" placeholder="예: 20261024">
+    </div>
+    <div class="f">
+      <label>🗓️정보 삭제 희망일 (필수) <small>예식일 다음날부터 최대 12개월까지 · 이 날짜가 지나면 사진과 입력 정보가 자동 삭제돼요</small></label>
+      <input id="deleteDate" type="date">
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <h2>💌 청첩장이 완성되었어요</h2>
+    <p>아래 링크를 복사해 카카오톡·문자로 전달하세요.</p>
+    <div class="url" id="resultUrl"></div>
+    <div class="btns">
+      <button class="b1" id="copyResult">링크 복사하기</button>
+      <a class="b2" id="openResult" target="_blank" rel="noopener">새 창에서 열기</a>
+    </div>
+  </div>
+</div>
+
+<div class="bottombar">
+  <div class="in">
+    <button id="previewBtn">👀 미리보기</button>
+    <button id="makeBtn">💌 청첩장 만들기</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+  const CREDIT_TEXT = 'made by 민지';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
+document.getElementById('credit').textContent = CREDIT_TEXT;
+const IDS=['groom','bride','groomEn','brideEn','groomP','brideP','groomOrder','brideOrder',
+'date','time','venue','hall','addr','lead','inviteTitle','galTitle','msg','footMsg',
+'subway','bus','car','charter','slug','editKey','deleteDate'];
+const $=id=>document.getElementById(id);
+const toastEl=$('toast');let tt;
+function toast(m){toastEl.textContent=m;toastEl.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove('on'),3000);}
+$('baseUrl').textContent=location.origin.replace(/^https?:\/\//,'')+'/i.html?id=';
+
+/* ── 삭제일 선택 범위: 예식일 +1일 ~ +12개월 ── */
+function fmtDate(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function deleteRange(){
+  const w=$('date').value;
+  if(!w)return null;
+  const min=new Date(w+'T00:00:00');min.setDate(min.getDate()+1);
+  const max=new Date(w+'T00:00:00');max.setMonth(max.getMonth()+12);
+  return {min:fmtDate(min),max:fmtDate(max)};
+}
+function syncDeleteRange(){
+  const r=deleteRange();
+  if(!r)return;
+  $('deleteDate').min=r.min;
+  $('deleteDate').max=r.max;
+  const v=$('deleteDate').value;
+  if(v&&(v<r.min||v>r.max))$('deleteDate').value='';
+}
+$('date').addEventListener('change',syncDeleteRange);
+
+/* ── 컬러 ── */
+const COLOR_PAIRS=[['cInk','cInkT'],['cCream','cCreamT'],['cGold','cGoldT'],['cSage','cSageT']];
+COLOR_PAIRS.forEach(([c,t])=>{
+  $(c).addEventListener('input',()=>{$(t).value=$(c).value.toUpperCase();save();});
+  $(t).addEventListener('input',()=>{
+    const v=$(t).value.trim();
+    if(/^#[0-9a-fA-F]{6}$/.test(v)){$(c).value=v;save();}
+  });
+});
+const PRESETS=[
+  ['올리브 그린','#2E3A2C','#F6F4EC','#C0A97E','#A8B096'],
+  ['더스티 로즈','#4A2E33','#FAF4F2','#C48A94','#D8B4BA'],
+  ['딥 네이비','#1F2A40','#F4F6FA','#B9A47C','#9BB0C8'],
+  ['테라코타','#3A241A','#FAF3EC','#C4785A','#D8B49C'],
+  ['모던 블랙','#1E1E1E','#F7F6F3','#B9A47C','#B8B8B0']
+];
+const pw=$('presets');
+PRESETS.forEach(([name,ink,cream,gold,sage])=>{
+  const b=document.createElement('button');
+  b.innerHTML=`<span class="dot" style="background:${ink}"></span><span class="dot" style="background:${gold}"></span>${name}`;
+  b.addEventListener('click',()=>{
+    [['cInk',ink],['cCream',cream],['cGold',gold],['cSage',sage]].forEach(([id,v])=>{
+      $(id).value=v;$(id+'T').value=v.toUpperCase();
+    });
+    save();toast(`'${name}' 컬러를 적용했어요`);
+  });
+  pw.appendChild(b);
+});
+
+/* ── 사진 업로드 ── */
+let heroUrl='';         // 표지 사진 URL
+let galUrls=[];         // 갤러리 URL 배열
+function compress(file){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=1600;
+      let w=img.width,h=img.height;
+      if(Math.max(w,h)>MAX){const r=MAX/Math.max(w,h);w=Math.round(w*r);h=Math.round(h*r);}
+      const c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      resolve(c.toDataURL('image/jpeg',0.82));
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror=()=>reject(new Error('이미지를 읽을 수 없어요'));
+    img.src=URL.createObjectURL(file);
+  });
+}
+async function uploadFile(file){
+  const dataUrl=await compress(file);
+  const r=await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({dataUrl,name:file.name})});
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error||'업로드 실패');
+  return j.url;
+}
+function makeThumb(wrap,url,onDel,isHero){
+  const t=document.createElement('div');t.className='thumb'+(isHero?' hero-mark':'');
+  t.innerHTML=`<img src="${url}"><button class="del">✕</button>`;
+  t.querySelector('.del').addEventListener('click',()=>{t.remove();onDel();save();});
+  wrap.appendChild(t);
+  return t;
+}
+async function handleFiles(files,isHero){
+  const wrap=isHero?$('heroThumb'):$('galThumbs');
+  if(isHero){wrap.innerHTML='';heroUrl='';}
+  for(const f of files){
+    const t=document.createElement('div');t.className='thumb';
+    t.innerHTML=`<div class="spin">업로드중…</div>`;
+    wrap.appendChild(t);
+    try{
+      const url=await uploadFile(f);
+      t.remove();
+      if(isHero){heroUrl=url;makeThumb(wrap,url,()=>{heroUrl='';},true);}
+      else{galUrls.push(url);makeThumb(wrap,url,()=>{galUrls=galUrls.filter(u=>u!==url);});}
+      save();
+    }catch(e){t.remove();toast('⚠️ '+e.message);}
+    if(isHero)break;
+  }
+}
+[['heroZone','heroFile',true],['galZone','galFile',false]].forEach(([z,f,isHero])=>{
+  $(z).addEventListener('click',()=>$(f).click());
+  $(f).addEventListener('change',e=>{handleFiles([...e.target.files],isHero);e.target.value='';});
+  $(z).addEventListener('dragover',e=>{e.preventDefault();});
+  $(z).addEventListener('drop',e=>{e.preventDefault();handleFiles([...e.dataTransfer.files].filter(x=>x.type.startsWith('image/')),isHero);});
+});
+
+/* ── 계좌 ── */
+function addAccRow(side,v){
+  const w=$(side);
+  const r=document.createElement('div');r.className='acc-row';
+  r.innerHTML=`<input placeholder="예금주" value="${v&&v.who?v.who:''}">
+               <input placeholder="은행" value="${v&&v.bank?v.bank:''}">
+               <input placeholder="계좌번호" value="${v&&v.num?v.num:''}">`;
+  r.querySelectorAll('input').forEach(i=>i.addEventListener('input',save));
+  w.appendChild(r);
+}
+document.querySelectorAll('.addbtn').forEach(b=>b.addEventListener('click',()=>{addAccRow(b.dataset.side);save();}));
+function readAcc(side){
+  return [...$(side).querySelectorAll('.acc-row')].map(r=>{
+    const [who,bank,num]=[...r.querySelectorAll('input')].map(i=>i.value.trim());
+    return {who,bank,num};
+  }).filter(a=>a.who||a.bank||a.num);
+}
+
+/* ── 데이터 수집 · 자동저장 ── */
+function collect(){
+  const d={};
+  IDS.forEach(id=>d[id]=$(id).value.trim());
+  d.slug=d.slug.toLowerCase();
+  d.hero=heroUrl;d.gallery=galUrls.slice();
+  d.accG=readAcc('accG');d.accB=readAcc('accB');
+  d.colors={ink:$('cInk').value,cream:$('cCream').value,gold:$('cGold').value,sage:$('cSage').value};
+  return d;
+}
+function save(){try{localStorage.setItem('wedit2',JSON.stringify(collect()));}catch(e){}}
+IDS.forEach(id=>$(id).addEventListener('input',save));
+(function restore(){
+  let d;try{d=JSON.parse(localStorage.getItem('wedit2'));}catch(e){}
+  if(!d){addAccRow('accG');addAccRow('accB');return;}
+  IDS.forEach(id=>{if(d[id]!==undefined)$(id).value=d[id];});
+  if(d.colors){[['cInk','ink'],['cCream','cream'],['cGold','gold'],['cSage','sage']].forEach(([id,k])=>{
+    if(d.colors[k]){$(id).value=d.colors[k];$(id+'T').value=d.colors[k].toUpperCase();}
+  });}
+  heroUrl=d.hero||'';
+  if(heroUrl)makeThumb($('heroThumb'),heroUrl,()=>{heroUrl='';},true);
+  galUrls=(d.gallery||[]);
+  galUrls.forEach(u=>makeThumb($('galThumbs'),u,()=>{galUrls=galUrls.filter(x=>x!==u);}));
+  (d.accG&&d.accG.length?d.accG:[null]).forEach(v=>addAccRow('accG',v));
+  (d.accB&&d.accB.length?d.accB:[null]).forEach(v=>addAccRow('accB',v));
+  syncDeleteRange();
+})();
+
+/* ── 만들기 · 미리보기 ── */
+function validate(d){
+  if(!d.groom||!d.bride){toast('신랑·신부 이름을 입력해 주세요');return false;}
+  if(!d.date){toast('예식 날짜를 입력해 주세요');return false;}
+  if(!d.venue){toast('예식장 이름을 입력해 주세요');return false;}
+  return true;
+}
+$('previewBtn').addEventListener('click',()=>{
+  const d=collect();if(!validate(d))return;
+  try{sessionStorage.setItem('wpreview',JSON.stringify(d));}catch(e){}
+  window.open('/i.html?preview=1','_blank');
+});
+$('makeBtn').addEventListener('click',async()=>{
+  const d=collect();if(!validate(d))return;
+  if(!/^[a-z0-9-]{3,40}$/.test(d.slug)){toast('주소는 영문 소문자·숫자·하이픈만, 3자 이상으로 정해주세요');$('slug').focus();return;}
+  if(!d.editKey||d.editKey.length<4){toast('수정 비밀번호를 4자 이상으로 정해주세요');$('editKey').focus();return;}
+  const rng=deleteRange();
+  if(!d.deleteDate){toast('정보 삭제 희망일을 선택해 주세요');$('deleteDate').focus();return;}
+  if(rng&&(d.deleteDate<rng.min||d.deleteDate>rng.max)){toast('삭제일은 예식일 다음날부터 최대 12개월 이내로 정해주세요');$('deleteDate').focus();return;}
+  const btn=$('makeBtn');btn.disabled=true;btn.textContent='만드는 중…';
+  try{
+    const r=await fetch('/api/create',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({slug:d.slug,editKey:d.editKey,data:d})});
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.error||'저장에 실패했어요');
+    const url=`${location.origin}/i.html?id=${d.slug}`;
+    $('result').classList.add('on');
+    $('resultUrl').textContent=url;
+    $('openResult').href=url;
+    $('result').scrollIntoView({behavior:'smooth'});
+    toast(j.updated?'기존 청첩장을 수정했어요 ✏️':'청첩장이 만들어졌어요 💌');
+  }catch(e){toast('⚠️ '+e.message);}
+  btn.disabled=false;btn.textContent='💌 청첩장 만들기';
+});
+$('copyResult').addEventListener('click',()=>{
+  const t=$('resultUrl').textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>toast('링크가 복사되었습니다 💌'));}
+  else{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('링크가 복사되었습니다 💌');}
+});
+</script>
+</body>
+</html>
