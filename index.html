@@ -44,6 +44,8 @@ header h1 span{color:var(--sage)}
   font-family:inherit;background:var(--cream);color:var(--ink);
 }
 .f input:focus,.f textarea:focus{outline:2px solid var(--sage);border-color:transparent;background:#fff}
+.f input,.f textarea{min-width:0;max-width:100%;-webkit-appearance:none;appearance:none}
+.f input[type=date],.f input[type=time]{display:block;width:100%;min-height:46px;text-align:left;-webkit-appearance:none}
 .f textarea{resize:vertical;min-height:96px;line-height:1.9}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}}
@@ -60,6 +62,10 @@ header h1 span{color:var(--sage)}
 .thumb .del{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(30,36,28,.75);color:#fff;font-size:12px;cursor:pointer;line-height:1}
 .thumb .spin{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.6);font-size:11px;color:var(--ink)}
 .thumb.hero-mark::after{content:"표지";position:absolute;left:4px;bottom:4px;background:var(--gold);color:#fff;font-size:10px;padding:2px 7px;border-radius:99px}
+.addtile{aspect-ratio:1;border:1.5px dashed var(--sage);border-radius:10px;background:var(--cream);color:var(--sage);font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.thumb .mv{position:absolute;bottom:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(30,36,28,.6);color:#fff;font-size:11px;cursor:pointer;line-height:1}
+.thumb .mvL{left:4px}
+.thumb .mvR{left:30px}
 /* 컬러 */
 .colors{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 @media(max-width:560px){.colors{grid-template-columns:1fr}}
@@ -182,9 +188,8 @@ header h1 span{color:var(--sage)}
     </div>
     <div class="f">
       <label>갤러리 사진 <small>여러 장 · 1:1 정방형 비율로 한 줄에 3장 들어가요. (클릭 시 원본 크기로 볼 수 있어요.) </small></label>
-      <div class="upzone" id="galZone">갤러리 사진 선택하기</div>
-      <input type="file" id="galFile" accept="image/*" multiple hidden>
-      <div class="thumbs" id="galThumbs"></div>
+     <input type="file" id="galFile" accept="image/*" multiple hidden>
+      <div class="thumbs" id="galThumbs"><button type="button" class="addtile" id="galAdd">＋</button></div>
     </div>
   </div>
 
@@ -520,27 +525,51 @@ function applyCrop(){
   });
 })();
 
+function renderGal(){
+  const wrap=$('galThumbs');
+  wrap.querySelectorAll('.thumb').forEach(t=>t.remove());
+  const addBtn=$('galAdd');
+  galUrls.forEach((url,i)=>{
+    const t=document.createElement('div');t.className='thumb';
+    t.innerHTML=`<img src="${url}"><button class="del">✕</button>
+      <button class="mv mvL">‹</button><button class="mv mvR">›</button>`;
+    t.querySelector('.del').addEventListener('click',()=>{galUrls.splice(i,1);renderGal();save();});
+    t.querySelector('.mvL').addEventListener('click',()=>{
+      if(i===0)return;
+      [galUrls[i-1],galUrls[i]]=[galUrls[i],galUrls[i-1]];renderGal();save();
+    });
+    t.querySelector('.mvR').addEventListener('click',()=>{
+      if(i===galUrls.length-1)return;
+      [galUrls[i+1],galUrls[i]]=[galUrls[i],galUrls[i+1]];renderGal();save();
+    });
+    wrap.insertBefore(t,addBtn);
+  });
+}
 async function handleFiles(files,isHero){
   if(isHero){if(files[0])openCrop(files[0]);return;}
   const wrap=$('galThumbs');
+  const addBtn=$('galAdd');
   for(const f of files){
     const t=document.createElement('div');t.className='thumb';
     t.innerHTML=`<div class="spin">업로드중…</div>`;
-    wrap.appendChild(t);
+    wrap.insertBefore(t,addBtn);
     try{
       const url=await uploadFile(f);
       t.remove();
-      galUrls.push(url);makeThumb(wrap,url,()=>{galUrls=galUrls.filter(u=>u!==url);});
+      galUrls.push(url);
       save();
     }catch(e){t.remove();toast('⚠️ '+e.message);}
   }
+  renderGal();
 }
-[['heroZone','heroFile',true],['galZone','galFile',false]].forEach(([z,f,isHero])=>{
-  $(z).addEventListener('click',()=>$(f).click());
-  $(f).addEventListener('change',e=>{handleFiles([...e.target.files],isHero);e.target.value='';});
-  $(z).addEventListener('dragover',e=>{e.preventDefault();});
-  $(z).addEventListener('drop',e=>{e.preventDefault();handleFiles([...e.dataTransfer.files].filter(x=>x.type.startsWith('image/')),isHero);});
-});
+$('heroZone').addEventListener('click',()=>$('heroFile').click());
+$('heroFile').addEventListener('change',e=>{handleFiles([...e.target.files],true);e.target.value='';});
+$('heroZone').addEventListener('dragover',e=>{e.preventDefault();});
+$('heroZone').addEventListener('drop',e=>{e.preventDefault();handleFiles([...e.dataTransfer.files].filter(x=>x.type.startsWith('image/')),true);});
+$('galAdd').addEventListener('click',()=>$('galFile').click());
+$('galFile').addEventListener('change',e=>{handleFiles([...e.target.files],false);e.target.value='';});
+$('galThumbs').addEventListener('dragover',e=>{e.preventDefault();});
+$('galThumbs').addEventListener('drop',e=>{e.preventDefault();handleFiles([...e.dataTransfer.files].filter(x=>x.type.startsWith('image/')),false);});
 
 /* ── 계좌 ── */
 function addAccRow(side,v){
@@ -582,7 +611,7 @@ IDS.forEach(id=>$(id).addEventListener('input',save));
   heroUrl=d.hero||'';
   if(heroUrl)makeThumb($('heroThumb'),heroUrl,()=>{heroUrl='';},true);
   galUrls=(d.gallery||[]);
-  galUrls.forEach(u=>makeThumb($('galThumbs'),u,()=>{galUrls=galUrls.filter(x=>x!==u);}));
+  renderGal();
   (d.accG&&d.accG.length?d.accG:[null]).forEach(v=>addAccRow('accG',v));
   (d.accB&&d.accB.length?d.accB:[null]).forEach(v=>addAccRow('accB',v));
   syncDeleteRange();
