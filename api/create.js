@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: '신랑·신부 이름, 날짜, 예식장은 필수예요.' });
     if (!data.deleteDate)
       return res.status(400).json({ error: '정보 삭제 희망일을 선택해 주세요.' });
-   {
+    {
       const now = new Date();
       const max = new Date(); max.setMonth(max.getMonth() + 12);
       const del = new Date(data.deleteDate + 'T23:59:59+09:00');
