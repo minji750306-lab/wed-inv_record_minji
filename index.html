@@ -12,7 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>모바일 청첩장 생성기</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='80'>💌</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@500&display=swap" rel="stylesheet">
@@ -313,15 +313,8 @@ header h1 span{color:var(--sage)}
 const CREDIT_URL  = 'https://blog.naver.com/record_minji';  /* ← 출처 링크 (선택) 예: 'https://instagram.com/아이디' — 비우면 글씨만 표시돼요 */
 const CREDIT_LINK_LABEL = '🔑 Naver Blog';  /* ← 링크 줄에 표시될 글자 */
 {
-  const c=document.getElementById('credit');
+const c=document.getElementById('credit');
   c.textContent=CREDIT_TEXT;
-  if(CREDIT_URL){
-    const a=document.createElement('a');
-    a.href=CREDIT_URL;a.target='_blank';a.rel='noopener';
-    a.textContent=CREDIT_LINK_LABEL;
-    a.style.cssText='display:block;margin-top:3px;font-size:11px;color:#C9A6AE;text-decoration:none';
-    c.after(a);
-  }
   const pc=document.getElementById('pageCredit');
   pc.textContent=CREDIT_TEXT;
   const pl=document.getElementById('pageCreditLink');
