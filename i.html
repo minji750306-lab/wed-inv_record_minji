@@ -12,7 +12,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="light only">
 <title>모바일 청첩장</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🤍</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤍</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+KR:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
@@ -74,6 +74,26 @@ section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
 .hero .venue-box::before,.hero .venue-box::after{content:"";position:absolute;width:22px;height:22px;border:1px solid var(--gold)}
 .hero .venue-box::before{left:0;top:0;border-right:none;border-bottom:none}
 .hero .venue-box::after{right:0;bottom:0;border-left:none;border-top:none}
+/* ── HERO 변형: 아치형 ── */
+.hero.style-arch{height:auto;min-height:0;background:var(--cream);padding:64px 28px 56px;text-align:center}
+.hero.style-arch .archwrap{max-width:300px;margin:0 auto}
+.hero.style-arch .eyebrow2{font-family:'Cormorant Garamond',serif;letter-spacing:.32em;font-size:11px;color:var(--gold);text-transform:uppercase;margin-bottom:22px}
+.hero.style-arch .archimg{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:160px 160px 12px 12px;display:block}
+.hero.style-arch .names2{font-family:'Noto Serif KR',serif;font-size:23px;font-weight:500;margin-top:28px;letter-spacing:.1em;color:var(--ink)}
+.hero.style-arch .names2 .amp2{color:var(--gold);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;margin:0 8px}
+.hero.style-arch .info2{margin-top:14px;font-size:13px;line-height:2;color:var(--muted);font-weight:300}
+/* ── HERO 변형: 액자형 ── */
+.hero.style-frame{height:auto;min-height:0;background:var(--ink);padding:56px 28px;text-align:center}
+.hero.style-frame .framecard{background:var(--white);max-width:310px;margin:0 auto;padding:22px 22px 30px;border-radius:6px;box-shadow:0 16px 44px rgba(0,0,0,.28)}
+.hero.style-frame .names3{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:500;letter-spacing:.14em;color:var(--ink);padding:10px 0 18px}
+.hero.style-frame .names3 .amp3{color:var(--gold);font-family:'Cormorant Garamond',serif;font-style:italic;margin:0 7px}
+.hero.style-frame .frameimg{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.hero.style-frame .info3{margin-top:20px;font-size:12.5px;line-height:2;color:var(--muted);font-weight:300}
+.hero.style-frame .datebig{font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:.28em;color:var(--ink);margin-top:16px}
+/* ── HERO 변형: 매거진형 ── */
+.hero.style-mag .magcenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--white);text-align:center;padding:0 24px}
+.hero.style-mag .magtitle{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:52px;line-height:1.05;font-weight:400}
+.hero.style-mag .txt .lead{display:none}
 /* 꽃잎 */
 .petal{position:absolute;top:-4vh;border-radius:60% 40% 55% 45%/55% 60% 40% 45%;background:var(--sage-lt);opacity:.7;animation:fall linear infinite;pointer-events:none}
 @keyframes fall{
@@ -286,7 +306,7 @@ async function loadData(){
   if(qs.get('preview')){
     try{return JSON.parse(sessionStorage.getItem('wpreview'));}catch(e){return null;}
   }
-const id=qs.get('id')||decodeURIComponent(location.pathname.slice(1));
+  const id=qs.get('id');
   if(id){
     try{
       const r=await fetch('/api/get?id='+encodeURIComponent(id));
@@ -334,16 +354,44 @@ const h12=hh%12===0?12:hh%12;
 document.title=`${D.groom} ♥ ${D.bride} 결혼합니다`;
 
 /* HERO */
-$('heroImg').src=D.hero||'';
-$('heroImg').onerror=function(){this.onerror=null;this.style.display='none';this.parentElement.style.background='linear-gradient(160deg,#465243,#2E3A2C)';};
-$('lead').textContent=D.lead||'';
-$('names').innerHTML=`${D.groomEn||D.groom}<span class="amp">&amp;</span>${D.brideEn||D.bride}`;
-$('dateEn').textContent=`${y} · ${String(mo).padStart(2,'0')} · ${String(dt).padStart(2,'0')}`;
-$('venueBox').innerHTML=
-  `${y}년 ${mo}월 ${dt}일 ${dayName}요일 ${ampm} ${h12}시${mm?` ${mm}분`:''}<br>${D.venue}${D.hall?' · '+D.hall:''}`;
+const heroSec=document.querySelector('.hero');
+const heroStyle=D.heroStyle||'classic';
+const dateLine=`${y}년 ${mo}월 ${dt}일 ${dayName}요일 ${ampm} ${h12}시${mm?` ${mm}분`:''}`;
+const dateEnLine=`${y} · ${String(mo).padStart(2,'0')} · ${String(dt).padStart(2,'0')}`;
+if(heroStyle==='arch'){
+  heroSec.className='hero style-arch';
+  heroSec.innerHTML=`<div class="archwrap fu">
+    <div class="eyebrow2">We are getting married</div>
+    <img class="archimg" src="${D.hero||''}" alt="" onerror="this.onerror=null;this.style.background='var(--sage-lt)';this.removeAttribute('src')">
+    <div class="names2">${D.groom}<span class="amp2">and</span>${D.bride}</div>
+    <div class="info2">${dateLine}<br>${D.venue}${D.hall?' · '+D.hall:''}</div>
+  </div>`;
+}else if(heroStyle==='frame'){
+  heroSec.className='hero style-frame';
+  heroSec.innerHTML=`<div class="framecard fu">
+    <div class="names3">${D.groom}<span class="amp3">&amp;</span>${D.bride}</div>
+    <img class="frameimg" src="${D.hero||''}" alt="" onerror="this.onerror=null;this.style.background='var(--sage-lt)';this.removeAttribute('src')">
+    <div class="datebig">${String(dt).padStart(2,'0')} · ${String(mo).padStart(2,'0')} · ${y}</div>
+    <div class="info3">${dateLine}<br>${D.venue}${D.hall?' · '+D.hall:''}</div>
+  </div>`;
+}else{
+  if(heroStyle==='mag'){
+    heroSec.classList.add('style-mag');
+    const mc=document.createElement('div');
+    mc.className='magcenter fu';
+    mc.innerHTML='<div class="magtitle">our<br>wedding<br>day</div>';
+    heroSec.insertBefore(mc,heroSec.querySelector('.txt'));
+  }
+  $('heroImg').src=D.hero||'';
+  $('heroImg').onerror=function(){this.onerror=null;this.style.display='none';this.parentElement.style.background='linear-gradient(160deg,#465243,#2E3A2C)';};
+  $('lead').textContent=D.lead||'';
+  $('names').innerHTML=`${D.groomEn||D.groom}<span class="amp">&amp;</span>${D.brideEn||D.bride}`;
+  $('dateEn').textContent=dateEnLine;
+  $('venueBox').innerHTML=`${dateLine}<br>${D.venue}${D.hall?' · '+D.hall:''}`;
+}
 
 /* 꽃잎 */
-const pw=$('petals');
+const pw=$('petals')||document.createElement('div');
 for(let i=0;i<16;i++){
   const p=document.createElement('div');p.className='petal';
   const s=6+Math.random()*8;
@@ -356,7 +404,7 @@ for(let i=0;i<16;i++){
 }
 /* 패럴랙스 */
 const hi=$('heroImg');
-addEventListener('scroll',()=>{const sy=scrollY;if(sy<innerHeight)hi.style.transform=`translateY(${sy*0.25}px)`;},{passive:true});
+if(hi)addEventListener('scroll',()=>{const sy=scrollY;if(sy<innerHeight)hi.style.transform=`translateY(${sy*0.25}px)`;},{passive:true});
 
 /* 초대 */
 if(D.inviteTitle)$('inviteTitle').textContent=D.inviteTitle;

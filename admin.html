@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!--
+  📄 admin.html — 초대 코드 관리 페이지 (운영자 전용)
+  주소: /admin.html
+  Vercel 환경변수 ADMIN_KEY 에 설정한 비밀번호로 로그인해요.
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>초대 코드 관리</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#4A3238;--sage:#C08A96;--line:#EBDCDE;--cream:#FAF5F4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--ink);padding:28px 18px}
+.wrap{max-width:560px;margin:0 auto}
+h1{font-size:18px;margin-bottom:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
+input{width:100%;border:1px solid var(--line);border-radius:9px;padding:12px 14px;font-size:14px;font-family:inherit;background:var(--cream)}
+button{border:0;border-radius:10px;padding:13px 20px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;background:var(--ink);color:#fff}
+button.lite{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.row{display:flex;gap:8px;margin-top:12px}
+.newcode{font-family:monospace;font-size:22px;letter-spacing:.1em;background:var(--cream);border:1px dashed var(--sage);border-radius:10px;padding:16px;text-align:center;margin-top:14px;cursor:pointer}
+.hint{font-size:12px;color:#9a8f92;margin-top:8px;line-height:1.8}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{color:#9a8f92;font-weight:500;font-size:12px}
+.used{color:#B0765E}
+.free{color:#4a9e6e}
+#msg{font-size:13px;color:#B0765E;margin-top:10px;min-height:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💌 초대 코드 관리</h1>
+
+  <div class="card" id="loginCard">
+    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:8px">관리자 비밀번호</label>
+    <input id="adminKey" type="password" placeholder="ADMIN_KEY">
+    <div class="row"><button id="loginBtn">들어가기</button></div>
+    <div id="msg"></div>
+  </div>
+
+  <div class="card" id="issueCard" style="display:none">
+    <button id="issueBtn">＋ 새 코드 발급</button>
+    <div class="newcode" id="newCode" style="display:none" title="클릭하면 복사돼요"></div>
+    <div class="hint">코드 1개 = 청첩장 1개. 커플에게 코드를 전달하면, 에디터 8번 항목에 입력하고 청첩장을 만들 수 있어요. 코드를 클릭하면 복사됩니다.</div>
+  </div>
+
+  <div class="card" id="listCard" style="display:none">
+    <div class="row" style="margin:0 0 12px"><button class="lite" id="refreshBtn">↺ 목록 새로고침</button></div>
+    <table>
+      <thead><tr><th>코드</th><th>상태</th><th>사용한 청첩장</th></tr></thead>
+      <tbody id="listBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let KEY='';
+function fmt(t){if(!t)return'';const d=new Date(t);return`${d.getMonth()+1}/${d.getDate()}`;}
+async function api(action){
+  const r=await fetch('/api/admin?action='+action,{headers:{'x-admin-key':KEY}});
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error||'실패');
+  return j;
+}
+async function loadList(){
+  const j=await api('list');
+  const tb=$('listBody');tb.innerHTML='';
+  if(!j.items.length){tb.innerHTML='<tr><td colspan="3" style="color:#9a8f92">발급된 코드가 없어요</td></tr>';return;}
+  j.items.forEach(it=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-family:monospace">${it.code}</td>
+      <td class="${it.usedBy?'used':'free'}">${it.usedBy?'사용됨 '+fmt(it.usedAt):'미사용'}</td>
+      <td>${it.usedBy?'/'+it.usedBy:'-'}</td>`;
+    tb.appendChild(tr);
+  });
+}
+$('loginBtn').addEventListener('click',async()=>{
+  KEY=$('adminKey').value.trim();
+  $('msg').textContent='';
+  try{
+    await loadList();
+    $('loginCard').style.display='none';
+    $('issueCard').style.display='block';
+    $('listCard').style.display='block';
+  }catch(e){$('msg').textContent='⚠️ '+e.message;}
+});
+$('adminKey').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click();});
+$('issueBtn').addEventListener('click',async()=>{
+  $('issueBtn').disabled=true;
+  try{
+    const j=await api('issue');
+    const nc=$('newCode');
+    nc.textContent=j.code;
+    nc.style.display='block';
+    await loadList();
+  }catch(e){alert(e.message);}
+  $('issueBtn').disabled=false;
+});
+$('newCode').addEventListener('click',()=>{
+  navigator.clipboard&&navigator.clipboard.writeText($('newCode').textContent).then(()=>{
+    $('newCode').textContent=$('newCode').textContent+'  ✓복사됨';
+    setTimeout(()=>{$('newCode').textContent=$('newCode').textContent.replace('  ✓복사됨','');},1200);
+  });
+});
+$('refreshBtn').addEventListener('click',loadList);
+</script>
+</body>
+</html>
