@@ -374,7 +374,7 @@ if(heroStyle==='arch'){
   heroSec.innerHTML=`<div class="framecard fu">
     <div class="names3">${D.groom}<span class="amp3">&amp;</span>${D.bride}</div>
     <img class="frameimg" src="${D.hero||''}" alt="" onerror="this.onerror=null;this.style.background='var(--sage-lt)';this.removeAttribute('src')">
-    <div class="datebig">${String(dt).padStart(2,'0')} · ${String(mo).padStart(2,'0')} · ${y}</div>
+    <div class="datebig">${y} · ${String(mo).padStart(2,'0')} · ${String(dt).padStart(2,'0')}</div>
     <div class="info3">${dateLine}<br>${D.venue}${D.hall?' · '+D.hall:''}</div>
   </div>`;
 }else{
