@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     // 초대 코드 확인 (발급된 코드여야 업로드 가능)
     const codeUp = (code || '').trim().toUpperCase();
     if (!/^[A-Z0-9-]{4,20}$/.test(codeUp))
-      return res.status(403).json({ error: '초대 코드를 먼저 입력해 주세요. (8번 항목)' });
+      return res.status(403).json({ error: '초대 코드를 먼저 입력해 주세요. (맨 위 항목)' });
     try { await head(`code/${codeUp}.json`); }
     catch (e) { return res.status(403).json({ error: '유효하지 않은 초대 코드예요.' }); }
 
