@@ -283,8 +283,8 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
 <div id="toast"></div>
 
 <script>
-const CREDIT_TEXT = 'made by 민지';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
-const CREDIT_URL  = '';  /* ← 출처 링크 (선택) 예: 'https://instagram.com/아이디' — 비우면 글씨만 표시돼요 */
+const CREDIT_TEXT = 'made by 밍지로움';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
+const CREDIT_URL  = 'https://blog.naver.com/record_minji';  /* ← 출처 링크 (선택) 예: 'https://instagram.com/아이디' — 비우면 글씨만 표시돼요 */
 {
   const c=document.getElementById('credit');
   if(CREDIT_URL){
@@ -516,7 +516,7 @@ if(!anyAcc)$('accSec').style.display='none';
 
 /* 푸터 */
 $('footMsg').textContent=D.footMsg||`저희 두 사람의 새로운 시작을\n함께해 주셔서 감사합니다.`;
-$('yr').textContent=`${D.groom} & ${D.bride} · ${y}`;
+$('yr').textContent=`${D.groom} ♥ ${D.bride} · ${y}`;
 function copyText(t,okMsg){
   if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>toast(okMsg)).catch(()=>fallbackCopy(t,okMsg));}
   else fallbackCopy(t,okMsg);
