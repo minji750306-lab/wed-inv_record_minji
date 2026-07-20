@@ -260,8 +260,18 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
 <div id="toast"></div>
 
 <script>
-const CREDIT_TEXT = '제작 · 밍지';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
-document.getElementById('credit').textContent = CREDIT_TEXT;
+const CREDIT_TEXT = 'made by 민지';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
+const CREDIT_URL  = '';  /* ← 출처 링크 (선택) 예: 'https://instagram.com/아이디' — 비우면 글씨만 표시돼요 */
+{
+  const c=document.getElementById('credit');
+  if(CREDIT_URL){
+    const a=document.createElement('a');
+    a.href=CREDIT_URL;a.target='_blank';a.rel='noopener';
+    a.textContent=CREDIT_TEXT;
+    a.style.color='inherit';a.style.textDecoration='none';
+    c.appendChild(a);
+  }else{c.textContent=CREDIT_TEXT;}
+}
 
 /* ── 데이터 불러오기 ──
    1) /i.html?id=주소  → 저장소(API)에서 불러오기 (기본)
