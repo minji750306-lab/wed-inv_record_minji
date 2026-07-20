@@ -11,7 +11,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>모바일 청첩장 에디터</title>
+<title>모바일 청첩장 생성기</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✒️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -222,7 +222,7 @@ header h1 span{color:var(--sage)}
       <input id="editKey" type="text" placeholder="예: 20261024">
     </div>
     <div class="f">
-      <label>🗓️정보 삭제 희망일 (필수) <small>예식일 다음날부터 최대 12개월까지 · 이 날짜가 지나면 사진과 입력 정보가 자동 삭제돼요</small></label>
+      <label>🗓️정보 삭제 희망일 (필수) <small>생성일 기준 최대 12개월 · 처음 정한 날짜는 이후 수정으로 변경할 수 없어요</small></label>
       <input id="deleteDate" type="date">
     </div>
   </div>
@@ -262,10 +262,8 @@ function fmtDate(d){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 function deleteRange(){
-  const w=$('date').value;
-  if(!w)return null;
-  const min=new Date(w+'T00:00:00');min.setDate(min.getDate()+1);
-  const max=new Date(w+'T00:00:00');max.setMonth(max.getMonth()+12);
+  const min=new Date();min.setDate(min.getDate()+1);
+  const max=new Date();max.setMonth(max.getMonth()+12);
   return {min:fmtDate(min),max:fmtDate(max)};
 }
 function syncDeleteRange(){
@@ -429,7 +427,7 @@ $('makeBtn').addEventListener('click',async()=>{
   if(!d.editKey||d.editKey.length<4){toast('수정 비밀번호를 4자 이상으로 정해주세요');$('editKey').focus();return;}
   const rng=deleteRange();
   if(!d.deleteDate){toast('정보 삭제 희망일을 선택해 주세요');$('deleteDate').focus();return;}
-  if(rng&&(d.deleteDate<rng.min||d.deleteDate>rng.max)){toast('삭제일은 예식일 다음날부터 최대 12개월 이내로 정해주세요');$('deleteDate').focus();return;}
+  if(rng&&(d.deleteDate<rng.min||d.deleteDate>rng.max)){toast('삭제일은 오늘 이후부터 최대 12개월 이내로 정해주세요');$('deleteDate').focus();return;}
   const btn=$('makeBtn');btn.disabled=true;btn.textContent='만드는 중…';
   try{
     const r=await fetch('/api/create',{method:'POST',headers:{'Content-Type':'application/json'},
