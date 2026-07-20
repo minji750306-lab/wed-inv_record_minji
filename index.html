@@ -11,7 +11,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>모바일 청첩장 생성기</title>
+<title>모바일 청첩장 생성기_By 밍지로움</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='80'>💌</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -180,7 +180,7 @@ header h1 span{color:var(--sage)}
       <div class="thumbs" id="heroThumb"></div>
     </div>
     <div class="f">
-      <label>갤러리 사진 <small>여러 장 · 1:1 정방형 비율로 들어가요.</small></label>
+      <label>갤러리 사진 <small>여러 장 · 1:1 정방형 비율로 들어가고, 클릭 시 원본 크기로 볼 수 있어요.</small></label>
       <div class="upzone" id="galZone">갤러리 사진 선택하기</div>
       <input type="file" id="galFile" accept="image/*" multiple hidden>
       <div class="thumbs" id="galThumbs"></div>
@@ -267,8 +267,8 @@ header h1 span{color:var(--sage)}
       <div class="slugrow"><span id="baseUrl"></span><input id="slug" placeholder="cheolsu-younghee" autocapitalize="off" autocomplete="off"></div>
     </div>
     <div class="f">
-      <label>🔒수정 비밀번호 <small>4자 이상 · 나중에 내용을 고칠 때 필요해요. 꼭 기억하세요!</small></label>
-      <input id="editKey" type="text" placeholder="예: 20261024">
+      <label>🔒수정 비밀번호 <small>4자 이상 · 다른 곳에서 쓰는 비밀번호 말고 간단한 숫자·단어로 정하세요. 수정 시 필요하니 꼭 기억하세요!</small></label>
+      <input id="editKey" type="text" autocomplete="off" name="edit-code" placeholder="예: 20261024">
     </div>
     <div class="f">
       <label>🗓️정보 삭제 희망일 <small>생성일 기준 최대 12개월 · 처음 정한 날짜는 이후 수정으로 변경할 수 없어요</small></label>
@@ -309,9 +309,9 @@ header h1 span{color:var(--sage)}
 <div id="toast"></div>
 
 <script>
-  const CREDIT_TEXT = 'made by 밍지로움';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
+  const CREDIT_TEXT = 'by 네이버 블로그 밍지로움';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
 const CREDIT_URL  = 'https://blog.naver.com/record_minji';  /* ← 출처 링크 (선택) 예: 'https://instagram.com/아이디' — 비우면 글씨만 표시돼요 */
-const CREDIT_LINK_LABEL = '🔗 Naver Blog 바로가기';  /* ← 링크 줄에 표시될 글자 */
+const CREDIT_LINK_LABEL = '🔗 네이버 블로그 바로가기';  /* ← 링크 줄에 표시될 글자 */
 {
 const c=document.getElementById('credit');
   c.textContent=CREDIT_TEXT;
