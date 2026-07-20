@@ -28,6 +28,11 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;fl
 header h1{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:500}
 header h1 span{color:var(--sage)}
   .credit{font-size:11.5px;color:#B9A8AC;font-weight:300;margin-top:5px;letter-spacing:.04em}
+.step{display:flex;align-items:center;gap:12px;margin:34px 0 14px}
+.step:first-of-type{margin-top:0}
+.step .no{background:var(--sage);color:#fff;font-size:12px;font-weight:700;padding:5px 13px;border-radius:99px;letter-spacing:.06em;white-space:nowrap}
+.step .tt{font-size:14px;font-weight:700}
+.step::after{content:"";flex:1;height:1px;background:var(--line)}
 .guide{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:24px;font-size:13.5px;line-height:2}
 .guide b{color:var(--sage)}
 .guide>b:first-child{font-size:16px}
@@ -100,6 +105,18 @@ header h1 span{color:var(--sage)}
 #makeBtn{background:var(--ink);color:#fff}
 #makeBtn:disabled{opacity:.6}
 #previewBtn{flex:0.6;background:#fff;border:1px solid var(--line);color:var(--ink)}
+  /* 표지 선택 카드 + 미리보기 */
+.hstyles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+@media(max-width:560px){.hstyles{grid-template-columns:repeat(2,1fr)}}
+.hs{border:2px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;padding:7px;font-family:inherit}
+.hs.on{border-color:var(--ink)}
+.hs .mini{aspect-ratio:4/5;border-radius:6px;overflow:hidden;position:relative;background:#DED4D6}
+.hs .mname{font-size:11px;margin-top:6px;text-align:center;color:var(--ink)}
+.hs .ph{position:absolute;inset:0;background:linear-gradient(150deg,#C9B8BC,#A8969A)}
+.hs .ln{position:absolute;left:20%;right:20%;height:3px;border-radius:2px;background:rgba(255,255,255,.85)}
+.hprev{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px;margin-bottom:12px}
+.hprev .hp-label{font-size:11.5px;color:#9a8f92;margin-bottom:8px}
+.hprev .hp-stage{max-width:210px;margin:0 auto;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
 /* 크롭 모달 */
 .cropbg{position:fixed;inset:0;background:rgba(30,20,22,.8);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
 .cropbg.on{display:flex}
@@ -145,6 +162,7 @@ header h1 span{color:var(--sage)}
     </div>
   </header>
 
+  <div class="step"><span class="no">STEP 1</span><span class="tt">시작하기</span></div>
   <div class="guide">
     <b>How to use?</b><br>
     1. 아래 내용을 채우고, 사진은 <b>파일을 직접 업로드</b>해주세요.<br> 
@@ -153,12 +171,14 @@ header h1 span{color:var(--sage)}
    <span class="tip">✏️ 수정방법: 8번에서 같은 주소 입력 → 같은 수정 비밀번호 입력 → 다시 만들면 내용이 덮어써져요.</span>
   </div>
 
-  <div class="card" style="border:1.5px solid var(--sage)">
+  <div class="card" >
     <h2><em>🎟️</em>초대 코드 <small>· 코드가 있어야 청첩장을 만들 수 있어요</small></h2>
     <div class="f" style="margin-bottom:0">
       <input id="inviteCode" autocomplete="off" placeholder="발급받은 코드 입력 (예: MJ-A1B2C3)" style="text-transform:uppercase">
     </div>
   </div>
+
+  <div class="step"><span class="no">STEP 2</span><span class="tt">내용 입력하기</span></div>
   
   <div class="card">
     <h2><em>1.</em>신랑 · 신부</h2>
@@ -188,8 +208,12 @@ header h1 span{color:var(--sage)}
   <div class="card">
     <h2><em>3.</em>사진 <small>· 클릭하거나 끌어다 놓으면 업로드돼요</small></h2>
     <div class="f">
-      <label>표지 디자인</label>
-      <div class="preset" id="heroStyles"></div>
+      <label>표지 디자인 <small>사진을 올리면 아래 미리보기에 바로 적용돼요</small></label>
+      <div class="hstyles" id="heroStyles"></div>
+      <div class="hprev">
+        <div class="hp-label">표지 미리보기</div>
+        <div class="hp-stage" id="hpStage"></div>
+      </div>
       <input id="heroStyle" type="hidden" value="classic">
     </div>
     <div class="f">
@@ -278,8 +302,10 @@ header h1 span{color:var(--sage)}
     </div>
   </div>
 
+  <div class="step"><span class="no">STEP 3</span><span class="tt">링크 만들기</span></div>
+  
   <div class="card">
-    <h2><em>8.</em>청첩장 주소 만들기</h2>
+    <h2>청첩장 주소 만들기</h2>
     <div class="f">
       <label>🔗원하는 링크 <small>영문 소문자·숫자·하이픈(-)만</small></label>
       <div class="slugrow"><span id="baseUrl"></span><input id="slug" placeholder="cheolsu-younghee" autocapitalize="off" autocomplete="off"></div>
@@ -404,21 +430,48 @@ const PRESETS=[
   ['테라코타','#3A241A','#FAF3EC','#C4785A','#D8B49C'],
   ['모던 블랙','#1E1E1E','#F7F6F3','#B9A47C','#B8B8B0']
 ];
-  const HERO_STYLES=[['classic','클래식 · 전체사진'],['arch','아치형'],['frame','액자형'],['mag','매거진형']];
+  const HERO_STYLES=[
+  ['classic','클래식',`<div class="ph"></div><div class="ln" style="bottom:26%"></div><div class="ln" style="bottom:16%;left:30%;right:30%"></div>`],
+  ['arch','아치형',`<div style="position:absolute;inset:0;background:#F6EFF0"></div><div class="ph" style="inset:12% 18% 30% 18%;border-radius:50% 50% 6px 6px/40% 40% 6px 6px"></div><div class="ln" style="bottom:18%;background:#B99CA2"></div>`],
+  ['frame','액자형',`<div style="position:absolute;inset:0;background:#5A4046"></div><div style="position:absolute;inset:10% 14%;background:#fff;border-radius:3px"></div><div class="ph" style="inset:22% 20% 26% 20%"></div><div class="ln" style="bottom:15%;background:#C9B0B6"></div>`],
+  ['mag','매거진',`<div class="ph"></div><div style="position:absolute;top:34%;left:0;right:0;text-align:center;color:#fff;font-style:italic;font-size:11px;font-family:serif">our<br>wedding</div>`]
+];
 const hw=$('heroStyles');
-HERO_STYLES.forEach(([v,label])=>{
+HERO_STYLES.forEach(([v,label,mock])=>{
   const b=document.createElement('button');
-  b.type='button';b.textContent=label;b.dataset.v=v;
-  b.addEventListener('click',()=>{
-    $('heroStyle').value=v;
-    hw.querySelectorAll('button').forEach(x=>x.style.cssText='');
-    b.style.cssText='background:var(--ink);color:#fff;border-color:var(--ink)';
-    save();
-  });
+  b.type='button';b.className='hs';b.dataset.v=v;
+  b.innerHTML=`<div class="mini">${mock}</div><div class="mname">${label}</div>`;
+  b.addEventListener('click',()=>{$('heroStyle').value=v;markHeroStyle();save();});
   hw.appendChild(b);
 });
 function markHeroStyle(){
-  hw.querySelectorAll('button').forEach(x=>x.style.cssText=x.dataset.v===$('heroStyle').value?'background:var(--ink);color:#fff;border-color:var(--ink)':'');
+  hw.querySelectorAll('.hs').forEach(x=>x.classList.toggle('on',x.dataset.v===$('heroStyle').value));
+  renderHeroPrev();
+}
+function renderHeroPrev(){
+  const st=$('heroStyle').value;
+  const g=$('groom').value.trim()||'신랑', br=$('bride').value.trim()||'신부';
+  const img=heroUrl?`<img src="${heroUrl}" style="width:100%;height:100%;object-fit:cover;display:block">`:`<div style="width:100%;height:100%;background:linear-gradient(150deg,#C9B8BC,#A8969A);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px">사진을 올려보세요</div>`;
+  const stage=$('hpStage');
+  if(st==='arch'){
+    stage.innerHTML=`<div style="background:#F6EFF0;padding:18px 22px;text-align:center;font-family:'Noto Serif KR',serif">
+      <div style="font-size:8px;letter-spacing:.25em;color:#B99CA2;margin-bottom:10px">WE ARE GETTING MARRIED</div>
+      <div style="aspect-ratio:4/5;border-radius:80px 80px 6px 6px;overflow:hidden">${img}</div>
+      <div style="font-size:12px;margin-top:10px">${g} <i style="color:#B99CA2">and</i> ${br}</div></div>`;
+  }else if(st==='frame'){
+    stage.innerHTML=`<div style="background:#5A4046;padding:16px;text-align:center">
+      <div style="background:#fff;padding:9px 9px 12px;border-radius:3px;font-family:'Noto Serif KR',serif">
+      <div style="font-size:11px;padding-bottom:7px">${g} <i style="color:#C9A68A">&amp;</i> ${br}</div>
+      <div style="aspect-ratio:4/5;overflow:hidden">${img}</div></div></div>`;
+  }else if(st==='mag'){
+    stage.innerHTML=`<div style="position:relative;aspect-ratio:4/5;overflow:hidden">${img}
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-style:italic;font-family:serif;font-size:20px;text-align:center;text-shadow:0 1px 8px rgba(0,0,0,.4)">our<br>wedding<br>day</div>
+      <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#fff;font-size:10px;text-shadow:0 1px 6px rgba(0,0,0,.5)">${g} &amp; ${br}</div></div>`;
+  }else{
+    stage.innerHTML=`<div style="position:relative;aspect-ratio:4/5;overflow:hidden">${img}
+      <div style="position:absolute;left:0;right:0;bottom:0;padding:14px 8px 10px;background:linear-gradient(transparent,rgba(30,20,22,.75));color:#fff;text-align:center;font-family:'Noto Serif KR',serif">
+      <div style="font-size:13px">${g} <i style="color:#D9BFA0">&amp;</i> ${br}</div></div></div>`;
+  }
 }
 markHeroStyle();
 const pw=$('presets');
@@ -628,7 +681,7 @@ function collect(){
   d.colors={ink:$('cInk').value,cream:$('cCream').value,gold:$('cGold').value,sage:$('cSage').value};
   return d;
 }
-function save(){try{localStorage.setItem('wedit2',JSON.stringify(collect()));}catch(e){}}
+function save(){try{localStorage.setItem('wedit2',JSON.stringify(collect()));}catch(e){}try{renderHeroPrev();}catch(e){}}
 IDS.forEach(id=>$(id).addEventListener('input',save));
 (function restore(){
   let d;try{d=JSON.parse(localStorage.getItem('wedit2'));}catch(e){}
