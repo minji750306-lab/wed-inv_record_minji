@@ -244,9 +244,9 @@ header h1 span{color:var(--sage)}
       </div>
     </div>
     <div class="hprev">
-      <div class="hp-label">실시간 미리보기 · 실제 청첩장 화면 그대로예요 (입력하면 잠시 후 자동 갱신)</div>
-      <div style="width:260px;height:420px;margin:0 auto;overflow:hidden;border-radius:10px;border:1px solid var(--line)">
-        <iframe id="liveFrame" src="about:blank" style="width:430px;height:695px;border:0;transform:scale(0.6047);transform-origin:0 0;pointer-events:none"></iframe>
+      <div class="hp-label">실시간 미리보기 · 표지 위주로 보여지며, 전체 화면은 모두 입력 후 미리보기로 볼 수 있어요.</div>
+      <div style="width:260px;height:420px;margin:0 auto;overflow:hidden;border-radius:10px;border:1px solid var(--line);position:relative">
+        <iframe id="liveFrame" src="about:blank" scrolling="no" style="width:450px;height:720px;border:0;transform:scale(0.6047);transform-origin:0 0;pointer-events:none;position:absolute;left:0;top:0"></iframe>
       </div>
     </div>
   </div>
@@ -280,7 +280,7 @@ header h1 span{color:var(--sage)}
       <div class="slugrow"><span id="baseUrl"></span><input id="slug" placeholder="cheolsu-younghee" autocapitalize="off" autocomplete="off"></div>
     </div>
     <div class="f">
-      <label>🔒수정 비밀번호 <small>4자 이상 · 다른 곳에서 쓰는 비밀번호 말고 간단한 숫자·단어로 정하세요. 수정 시 필요하니 꼭 기억하세요!</small></label>
+      <label>🔒수정 비밀번호 <small>4자 이상 · 간단한 숫자·단어로 정하세요. 수정 시 필요하니 꼭 기억하세요!</small></label>
       <input id="editKey" type="text" autocomplete="off" name="edit-code" placeholder="예: 20261024">
     </div>
     <div class="f">
