@@ -286,7 +286,7 @@ async function loadData(){
   if(qs.get('preview')){
     try{return JSON.parse(sessionStorage.getItem('wpreview'));}catch(e){return null;}
   }
-  const id=qs.get('id');
+const id=qs.get('id')||decodeURIComponent(location.pathname.slice(1));
   if(id){
     try{
       const r=await fetch('/api/get?id='+encodeURIComponent(id));
