@@ -242,10 +242,10 @@ header h1 span{color:var(--sage)}
 
   <div class="card">
     <h2><em>6.</em>교통편 <small>· 비워둔 항목은 표시되지 않아요.</small></h2>
-    <div class="f"><label>지하철</label><textarea id="subway" placeholder="(예시) 2호선 OO역 3번 출구 도보 5분"></textarea></div>
-    <div class="f"><label>버스</label><textarea id="bus" placeholder="(예시) OO정류장 하차 (100, 200, 300번)"></textarea></div>
-    <div class="f"><label>자가용 · 주차</label><textarea id="car" placeholder="(예시) 내비게이션에 'OO웨딩홀' 검색&#10;건물 주차장 2시간 무료"></textarea></div>
-    <div class="f"><label>전세버스</label><textarea id="charter" placeholder="(예시) 출발지: OO / 출발 시간: 10:30"></textarea></div>
+    <div class="f"><label>지하철</label><textarea id="subway" placeholder="예: 2호선 OO역 3번 출구 도보 5분"></textarea></div>
+    <div class="f"><label>버스</label><textarea id="bus" placeholder="예: OO정류장 하차 (100, 200, 300번)"></textarea></div>
+    <div class="f"><label>자가용 · 주차</label><textarea id="car" placeholder="예: 내비게이션에 'OO웨딩홀' 검색&#10;건물 주차장 2시간 무료"></textarea></div>
+    <div class="f"><label>전세버스</label><textarea id="charter" placeholder="예: 출발지: OO / 출발 시간: 10:30"></textarea></div>
   </div>
 
   <div class="card">
@@ -263,7 +263,7 @@ header h1 span{color:var(--sage)}
   <div class="card">
     <h2><em>8.</em>청첩장 주소 만들기</h2>
     <div class="f">
-      <label>🔗원하는 주소 <small>영문 소문자·숫자·하이픈(-)만</small></label>
+      <label>🔗원하는 링크 <small>영문 소문자·숫자·하이픈(-)만</small></label>
       <div class="slugrow"><span id="baseUrl"></span><input id="slug" placeholder="cheolsu-younghee" autocapitalize="off" autocomplete="off"></div>
     </div>
     <div class="f">
@@ -309,9 +309,9 @@ header h1 span{color:var(--sage)}
 <div id="toast"></div>
 
 <script>
-  const CREDIT_TEXT = 'made by 민지';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
+  const CREDIT_TEXT = 'made by 밍지로움';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
 const CREDIT_URL  = 'https://blog.naver.com/record_minji';  /* ← 출처 링크 (선택) 예: 'https://instagram.com/아이디' — 비우면 글씨만 표시돼요 */
-const CREDIT_LINK_LABEL = '🔑 Naver Blog';  /* ← 링크 줄에 표시될 글자 */
+const CREDIT_LINK_LABEL = '🔗 Naver Blog 바로가기';  /* ← 링크 줄에 표시될 글자 */
 {
 const c=document.getElementById('credit');
   c.textContent=CREDIT_TEXT;
