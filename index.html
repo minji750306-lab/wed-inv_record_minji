@@ -434,16 +434,18 @@ function openCrop(file){
   const img=new Image();
   img.onload=()=>{
     cropState.img=img;
-    const frame=$('cropFrame');
-    const fw=frame.clientWidth, fh=frame.clientHeight;
-    cropState.base=Math.max(fw/img.width, fh/img.height);
-    cropState.zoom=1;
-    $('cropZoom').value=1;
-    cropState.x=(fw-img.width*cropState.base)/2;
-    cropState.y=(fh-img.height*cropState.base)/2;
     $('cropImg').src=img.src;
-    applyCrop();
     $('cropBg').classList.add('on');
+    requestAnimationFrame(()=>{
+      const frame=$('cropFrame');
+      const fw=frame.clientWidth, fh=frame.clientHeight;
+      cropState.base=Math.max(fw/img.width, fh/img.height);
+      cropState.zoom=1;
+      $('cropZoom').value=1;
+      cropState.x=(fw-img.width*cropState.base)/2;
+      cropState.y=(fh-img.height*cropState.base)/2;
+      applyCrop();
+    });
   };
   img.onerror=()=>toast('이미지를 읽을 수 없어요');
   img.src=URL.createObjectURL(file);
