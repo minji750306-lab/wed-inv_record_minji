@@ -429,7 +429,7 @@ function renderHeroPrev(){
       </div>
     </div>
     <div style="background:${cream};display:flex;gap:5px;justify-content:center;padding:9px">
-      ${'<span style="width:9px;height:7px;border-radius:60% 40% 55% 45%/55% 60% 40% 45%;background:'+mixL(sage,0.45)+'"></span>'.repeat(5)}
+      ${Array(5).fill(0).map(()=>`<span style="width:9px;height:7px;border-radius:60% 40% 55% 45%/55% 60% 40% 45%;background:${mixL(sage,0.45)}"></span>`).join('')}
     </div>
   </div>`;
 }
