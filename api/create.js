@@ -52,15 +52,23 @@ export default async function handler(req, res) {
     if (codeData.usedBy)
       return res.status(403).json({ error: '이미 사용된 초대 코드예요.' });
 
-    // 코드 사용 처리 + 청첩장 저장
-    await put(`code/${codeUp}.json`, JSON.stringify({ ...codeData, usedBy: slug, usedAt: Date.now() }), {
-      access: 'public', contentType: 'application/json',
-      addRandomSuffix: false, allowOverwrite: true, cacheControlMaxAge: 0
-    });
+    // ── 순서 변경: 청첩장 데이터를 먼저 저장하고, 성공한 뒤에만 코드를 사용 처리 ──
+    // 이렇게 하면 저장 중간에 실패해도 코드가 "사용됨"으로 잘못 남는 일이 없음
     await put(path, JSON.stringify({ editKey, code: codeUp, data, updated: Date.now() }), {
       access: 'public', contentType: 'application/json',
       addRandomSuffix: false, allowOverwrite: true, cacheControlMaxAge: 0
     });
+
+    try {
+      await put(`code/${codeUp}.json`, JSON.stringify({ ...codeData, usedBy: slug, usedAt: Date.now() }), {
+        access: 'public', contentType: 'application/json',
+        addRandomSuffix: false, allowOverwrite: true, cacheControlMaxAge: 0
+      });
+    } catch (e) {
+      // 코드 상태 갱신이 실패해도 청첩장 자체는 이미 저장됐으므로 사용자에게는 성공으로 응답
+      // (코드 상태는 다음 admin list 조회 시 여전히 "미사용"으로 보일 수 있음)
+    }
+
     return res.status(200).json({ ok: true, slug, updated: false });
   } catch (e) {
     return res.status(500).json({ error: '저장 중 문제가 생겼어요. 잠시 후 다시 시도해주세요.' });
