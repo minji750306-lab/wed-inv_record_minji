@@ -331,7 +331,7 @@ const IDS=['groom','bride','groomEn','brideEn','groomP','brideP','groomOrder','b
 const $=id=>document.getElementById(id);
 const toastEl=$('toast');let tt;
 function toast(m){toastEl.textContent=m;toastEl.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove('on'),3000);}
-$('baseUrl').textContent=location.origin.replace(/^https?:\/\//,'')+'/i.html?id=';
+$('baseUrl').textContent=location.origin.replace(/^https?:\/\//,'')+'/';
 
 /* ── 삭제일 선택 범위: 예식일 +1일 ~ +12개월 ── */
 function fmtDate(d){
@@ -615,7 +615,7 @@ $('makeBtn').addEventListener('click',async()=>{
       body:JSON.stringify({slug:d.slug,editKey:d.editKey,data:d})});
     const j=await r.json();
     if(!r.ok)throw new Error(j.error||'저장에 실패했어요');
-    const url=`${location.origin}/i.html?id=${d.slug}`;
+    const url=`${location.origin}/${d.slug}`;
     $('result').classList.add('on');
     $('resultUrl').textContent=url;
     $('openResult').href=url;
