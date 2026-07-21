@@ -166,7 +166,7 @@ header h1 span{color:var(--sage)}
   </div>
 
   <div class="card">
-    <h2><em>🎟️</em>초대 코드 <small>· 코드가 있어야 청첩장을 만들 수 있어요 · 코드 1개당 청첩장 1개, 수정은 무제한</small></h2>
+    <h2><em>🎟️</em>초대 코드 <small>· 코드가 있어야 청첩장을 만들 수 있어요 · 코드 1개당 청첩장 1개, 수정은 무제한 (삭제일 제외)</small></h2>
     <div class="f" style="margin-bottom:0">
       <input id="inviteCode" autocomplete="off" placeholder="발급받은 코드 입력 (예: MJ-A1B2C3)" style="text-transform:uppercase">
     </div>
@@ -302,8 +302,8 @@ header h1 span{color:var(--sage)}
     <div class="f"><label>제목</label><input id="snapTitle" placeholder="게스트 스냅"></div>
     <div class="f"><label>안내 문구</label><textarea id="snapDesc" placeholder="(예시) 예식이 진행되는 동안 자유롭게 사진을 찍어주세요. 아래 버튼으로 올려주시면 저희 부부에게 소중한 선물이 됩니다."></textarea></div>
     <div class="f"><label>업로드 오픈일 <small>· 비워두면 언제든 업로드 가능</small></label><input id="snapOpenDate" type="date"></div>
-    <div class="f"><label>업로드된 사진 확인하기 <small>· 청첩장을 만든 뒤 아래 페이지에서 주소·수정 비밀번호로 나만 볼 수 있어요</small></label>
-      <a href="/snap-view.html" target="_blank" style="font-size:13px;color:var(--sage)">/snap-view.html 열어서 확인하기 →</a>
+    <div class="f"><label>업로드된 사진 확인하기 <small>· 예식일로부터 14일 후 자동 삭제 · 청첩장을 만든 뒤 아래 페이지에서 주소·수정 비밀번호로 나만 볼 수 있어요</small></label>
+      <a href="/snap-view.html" target="_blank" style="font-size:13px;color:var(--sage)">/하객 스냅 확인하기(링크)</a>
     </div>
   </div>
 
@@ -316,8 +316,9 @@ header h1 span{color:var(--sage)}
       <div class="slugrow"><span id="baseUrl"></span><input id="slug" placeholder="cheolsu-younghee" autocapitalize="off" autocomplete="off"></div>
     </div>
     <div class="f">
-      <label>🔒수정 비밀번호 <small>4자 이상의 간단한 숫자·단어로 정하세요 · 수정/하객스냅 확인/참석여부 확인 시 필요하니 꼭 기억하세요! (관리자도 알 수 없어요) </small></label>
+      <label>🔒수정 비밀번호 <small>4자 이상의 간단한 숫자·단어로 정하세요 </small></label>
       <input id="editKey" type="text" autocomplete="off" name="edit-code" placeholder="예: 20261024">
+      <div style="font-size:12.5px;color:#B0765E;background:#FDF3F0;border:1px solid #F3DBD3;border-radius:8px;padding:8px 11px;margin-top:8px;line-height:1.7">🔑 수정 · 하객스냅 확인 · 참석여부 확인 시 필요하니 <b>꼭 기억하세요!</b> (관리자도 알 수 없어요)</div>
     </div>
     <div class="f">
       <label>🗓️정보 삭제 희망일 <small>생성일 기준 최대 12개월 · 처음 정한 날짜는 이후 수정으로 변경할 수 없어요</small></label>
