@@ -12,7 +12,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="light only">
 <title>모바일 청첩장</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤍</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🤍</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&family=Noto+Serif+KR:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
@@ -431,7 +431,7 @@ const ampm=hh<12?'오전':(hh<17?'낮':'저녁');
 const h12=hh%12===0?12:hh%12;
 
 /* 문서 제목/설명 */
-document.title=`${D.groom} ♥ ${D.bride} 결혼합니다`;
+document.title=`${D.groom} ♥ ${D.bride}`;
 
 /* HERO */
 const heroSec=document.querySelector('.hero');
@@ -694,7 +694,7 @@ if(!anyAcc)$('accSec').style.display='none';
         ok++;
       }catch(err){toast('⚠️ '+files[i].name+': '+err.message);}
     }
-    prog.textContent=ok?`${ok}장 업로드 완료 🤍`:'업로드에 실패했어요';
+    prog.textContent=ok?`${ok}장 업로드 완료 🤍 감사합니다`:'업로드에 실패했어요';
     btn.disabled=false;
   });
 })();
