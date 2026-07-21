@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
       if (data) {
         const title = `${data.groom} ♥ ${data.bride} 결혼합니다`;
-        const desc = (data.lead || data.msg || '저희 두 사람의 결혼식에 초대합니다.')
+        const desc = (data.ogDesc || data.lead || data.msg || '저희 두 사람의 결혼식에 초대합니다.')
           .replace(/\s+/g, ' ').trim().slice(0, 90);
         const image = data.ogImage || data.hero || '';
         const proto = req.headers['x-forwarded-proto'] || 'https';
