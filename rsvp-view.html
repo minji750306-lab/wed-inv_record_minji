@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--
+  📄 rsvp-view.html — 참석 여부(RSVP) 응답 확인 페이지
+  주소: /rsvp-view.html
+  청첩장 주소(슬러그) + 그 청첩장의 수정 비밀번호를 입력하면
+  본인만 응답 목록을 볼 수 있어요.
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>참석 여부 확인</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#4A3238;--sage:#C08A96;--line:#EBDCDE;--cream:#FAF5F4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--ink);padding:28px 18px}
+.wrap{max-width:560px;margin:0 auto}
+h1{font-size:18px;margin-bottom:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
+input{width:100%;border:1px solid var(--line);border-radius:9px;padding:12px 14px;font-size:14px;font-family:inherit;background:var(--cream);margin-bottom:10px}
+button{border:0;border-radius:10px;padding:13px 20px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;background:var(--ink);color:#fff;width:100%}
+.hint{font-size:12px;color:#9a8f92;margin-top:8px;line-height:1.8}
+#msg{font-size:13px;color:#B0765E;margin-top:10px;min-height:18px}
+.stat{display:flex;gap:8px;margin-bottom:16px}
+.stat div{flex:1;background:var(--cream);border-radius:10px;padding:14px;text-align:center}
+.stat b{display:block;font-size:20px;margin-bottom:2px}
+.stat span{font-size:12px;color:#9a8f92}
+.row{border-bottom:1px solid var(--line);padding:12px 0}
+.row:last-child{border-bottom:0}
+.row .top{display:flex;justify-content:space-between;font-size:14px;font-weight:500}
+.row .yes{color:#4a9e6e}
+.row .no{color:#B0765E}
+.row .sub{font-size:12.5px;color:#9a8f92;margin-top:4px}
+.row .msg2{font-size:13px;color:var(--ink);margin-top:6px;background:var(--cream);border-radius:8px;padding:8px 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💌 참석 여부 확인</h1>
+
+  <div class="card" id="loginCard">
+    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:8px">청첩장 주소 (슬러그)</label>
+    <input id="slug" placeholder="예: cheolsu-younghee">
+    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:8px">수정 비밀번호</label>
+    <input id="editKey" type="password" placeholder="청첩장 만들 때 정한 비밀번호">
+    <button id="loginBtn">확인하기</button>
+    <div id="msg"></div>
+    <div class="hint">본인이 만든 청첩장의 주소와 수정 비밀번호를 입력하면 응답을 볼 수 있어요. 다른 사람은 볼 수 없으니 안심하세요.</div>
+  </div>
+
+  <div class="card" id="listCard" style="display:none">
+    <div class="stat">
+      <div><b id="cntYes">0</b><span>참석</span></div>
+      <div><b id="cntNo">0</b><span>불참</span></div>
+      <div><b id="cntGuests">0</b><span>총 참석 인원</span></div>
+    </div>
+    <div class="row" style="margin:0 0 12px;border:0;padding:0"><button id="refreshBtn" style="background:#fff;border:1px solid var(--line);color:var(--ink)">↺ 새로고침</button></div>
+    <div id="listBody"></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let SLUG='',KEY='';
+async function load(){
+  const r=await fetch(`/api/rsvp?slug=${encodeURIComponent(SLUG)}&editKey=${encodeURIComponent(KEY)}`);
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error||'실패');
+  return j.items;
+}
+function render(items){
+  $('cntYes').textContent=items.filter(i=>i.attend==='yes').length;
+  $('cntNo').textContent=items.filter(i=>i.attend==='no').length;
+  $('cntGuests').textContent=items.filter(i=>i.attend==='yes').reduce((s,i)=>s+(i.guests||1),0);
+  const lb=$('listBody');lb.innerHTML='';
+  if(!items.length){lb.innerHTML='<p style="color:#9a8f92;font-size:13px">아직 응답이 없어요</p>';return;}
+  items.forEach(i=>{
+    const d=new Date(i.at);
+    const row=document.createElement('div');row.className='row';
+    row.innerHTML=`<div class="top"><span>${i.name}${i.side?' · '+i.side:''}</span><span class="${i.attend==='yes'?'yes':'no'}">${i.attend==='yes'?'참석 · '+i.guests+'명':'불참'}</span></div>
+      <div class="sub">${i.phone?i.phone+' · ':''}${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</div>
+      ${i.msg?`<div class="msg2"></div>`:''}`;
+    if(i.msg)row.querySelector('.msg2').textContent=i.msg;
+    lb.appendChild(row);
+  });
+}
+$('loginBtn').addEventListener('click',async()=>{
+  SLUG=$('slug').value.trim().toLowerCase();KEY=$('editKey').value;
+  $('msg').textContent='';
+  if(!SLUG){$('msg').textContent='⚠️ 청첩장 주소를 입력해 주세요.';return;}
+  try{
+    const items=await load();
+    $('loginCard').style.display='none';
+    $('listCard').style.display='block';
+    render(items);
+  }catch(e){$('msg').textContent='⚠️ '+e.message;}
+});
+$('editKey').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click();});
+$('refreshBtn').addEventListener('click',async()=>{
+  try{render(await load());}catch(e){alert(e.message);}
+});
+
+// 청첩장 만들기 페이지에서 슬러그를 미리 넘겨준 경우 자동으로 채워줌
+(function(){
+  const qs=new URLSearchParams(location.search);
+  if(qs.get('slug'))$('slug').value=qs.get('slug');
+})();
+</script>
+</body>
+</html>

@@ -194,6 +194,29 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
 }
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ── RSVP ── */
+.rsvp-btn-wrap{text-align:center;margin-top:34px}
+.rsvp-open-btn{display:inline-block;border:1px solid var(--line);background:var(--white);color:var(--ink);padding:14px 30px;border-radius:999px;font-size:13.5px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap}
+.rsvp-open-btn:disabled{opacity:.5;cursor:default}
+.rsvp-modal{position:fixed;inset:0;background:rgba(20,24,18,.55);display:none;align-items:center;justify-content:center;z-index:70;padding:24px}
+.rsvp-modal.open{display:flex}
+.rsvp-card{background:var(--cream);border-radius:18px;max-width:360px;width:100%;padding:34px 26px 26px;position:relative;max-height:88dvh;overflow-y:auto;text-align:center}
+.rsvp-x{position:absolute;top:14px;right:16px;background:none;border:0;font-size:20px;line-height:1;color:var(--muted);cursor:pointer}
+.rsvp-card h3{font-size:18px;font-weight:500;margin:4px 0 14px;color:var(--ink);font-family:'Noto Serif KR',serif}
+.rsvp-card .rsvp-desc{font-size:13px;line-height:1.9;color:var(--ink-soft);font-family:'Noto Sans KR',sans-serif;font-weight:300;margin-bottom:22px;white-space:pre-line}
+.rsvp-seg{display:flex;gap:8px;margin-bottom:10px}
+.rsvp-seg button{flex:1;padding:12px 0;border-radius:9px;border:1px solid var(--line);background:var(--white);color:var(--ink);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer}
+.rsvp-seg button.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+#rsvpForm select,#rsvpForm input,#rsvpForm textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:12px 14px;font-size:13.5px;font-family:'Noto Sans KR',sans-serif;background:var(--white);color:var(--ink);margin-bottom:10px;-webkit-appearance:none}
+#rsvpForm textarea{resize:none;min-height:60px}
+.rsvp-submit{width:100%;border:0;background:var(--ink);color:var(--cream);padding:14px 0;border-radius:9px;font-size:14.5px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;margin-top:4px}
+.rsvp-submit:disabled{opacity:.6}
+
+/* ── 게스트 스냅 ── */
+#snapSec{text-align:center}
+#snapSec .snap-desc{font-size:13.5px;line-height:2;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-weight:300;white-space:pre-line;margin-bottom:30px}
+#snapProgress{margin-top:14px;font-size:12.5px;color:var(--muted);font-family:'Noto Sans KR',sans-serif}
+
 /* 오류 화면 */
 #err{display:none;min-height:100dvh;align-items:center;justify-content:center;text-align:center;padding:40px;font-family:'Noto Sans KR',sans-serif;color:var(--muted);line-height:2}
 
@@ -250,6 +273,9 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
       <a id="mTmap" class="mb-tmap" href="#">티맵</a>
     </div>
     <div id="transWrap"></div>
+    <div class="rsvp-btn-wrap fu" id="rsvpBtnWrap" style="display:none">
+      <button class="rsvp-open-btn" id="rsvpOpenBtn">참석 여부 안내</button>
+    </div>
   </section>
 
   <!-- 갤러리 -->
@@ -264,6 +290,18 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
     <div class="eyebrow fu">With gratitude</div>
     <h2 class="sec-title fu" style="color:var(--white)">마음 전하실 곳</h2>
     <div id="accWrap"></div>
+  </section>
+
+  <!-- 게스트 스냅 -->
+  <section id="snapSec" style="display:none">
+    <div class="eyebrow fu">Guest Snap</div>
+    <h2 class="sec-title fu" id="snapTitleEl">게스트 스냅</h2>
+    <p class="snap-desc fu" id="snapDescEl"></p>
+    <div class="fu">
+      <input type="file" id="snapFile" accept="image/*" multiple style="display:none">
+      <button class="rsvp-open-btn" id="snapBtn">사진 업로드</button>
+      <div id="snapProgress"></div>
+    </div>
   </section>
 
   <footer>
@@ -281,6 +319,32 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
   <img id="lbImg" alt="">
 </div>
 <div id="toast"></div>
+
+<div class="rsvp-modal" id="rsvpModal">
+  <div class="rsvp-card">
+    <button class="rsvp-x" id="rsvpX" aria-label="닫기">✕</button>
+    <div class="eyebrow" style="margin-top:2px">RSVP</div>
+    <h3 id="rsvpTitleEl">참석 여부 안내</h3>
+    <p class="rsvp-desc" id="rsvpDescEl"></p>
+    <form id="rsvpForm">
+      <div class="rsvp-seg" id="rsvpAttendSeg">
+        <button type="button" data-v="yes" class="on">참석</button>
+        <button type="button" data-v="no">불참</button>
+      </div>
+      <input type="hidden" id="rsvpAttend" value="yes">
+      <select id="rsvpSide">
+        <option value="">신랑측 · 신부측 (선택)</option>
+        <option value="신랑측">신랑측 하객</option>
+        <option value="신부측">신부측 하객</option>
+      </select>
+      <input id="rsvpName" placeholder="성함" required>
+      <input id="rsvpGuests" type="number" min="1" max="20" value="1" placeholder="참석 인원 (본인 포함)">
+      <input id="rsvpPhone" type="tel" placeholder="연락처 (선택)">
+      <textarea id="rsvpMsg" placeholder="전하실 말씀 (선택)"></textarea>
+      <button type="submit" class="rsvp-submit">전달하기</button>
+    </form>
+  </div>
+</div>
 
 <script>
 const CREDIT_TEXT = 'made by 밍지로움';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
@@ -300,6 +364,7 @@ const CREDIT_URL  = 'https://blog.naver.com/record_minji';  /* ← 출처 링크
    1) /i.html?id=주소  → 저장소(API)에서 불러오기 (기본)
    2) /i.html?preview=1 → 에디터 미리보기
    3) /i.html#암호문   → 예전 방식 링크도 계속 동작           */
+let SLUG=null; /* RSVP·게스트 스냅 전송 시 이 청첩장의 주소로 사용 */
 function decode(hash){
   const b64 = hash.replace(/-/g,'+').replace(/_/g,'/');
   return JSON.parse(decodeURIComponent(escape(atob(b64))));
@@ -317,6 +382,7 @@ async function loadData(){
     if(seg && !/\.(html?|json|js|css|png|jpg|jpeg|svg|ico)$/i.test(seg)) id=seg;
   }
   if(id){
+    SLUG=id;
     try{
       const r=await fetch('/api/get?id='+encodeURIComponent(id));
       if(!r.ok)return null;
@@ -519,6 +585,112 @@ accs.forEach(([side,list])=>{
   aw.appendChild(de);
 });
 if(!anyAcc)$('accSec').style.display='none';
+
+/* RSVP */
+(function(){
+  const mode=D.rsvpMode||'off';
+  if(mode==='off')return;
+  $('rsvpTitleEl').textContent=D.rsvpTitle||'참석 여부 안내';
+  $('rsvpDescEl').textContent=D.rsvpDesc||'귀한 걸음 해주시는 모든 분을 정성껏 모시고자 참석 여부를 여쭙습니다.';
+  const modal=$('rsvpModal');
+  function openModal(){modal.classList.add('open');}
+  function closeModal(){modal.classList.remove('open');}
+  $('rsvpX').addEventListener('click',closeModal);
+  modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+  $('rsvpAttendSeg').querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      $('rsvpAttendSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');$('rsvpAttend').value=b.dataset.v;
+    });
+  });
+  $('rsvpForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const name=$('rsvpName').value.trim();
+    if(!name){toast('성함을 입력해 주세요');return;}
+    if(!SLUG){toast('미리보기에서는 전달되지 않아요');return;}
+    const btn=e.target.querySelector('.rsvp-submit');btn.disabled=true;btn.textContent='전달 중...';
+    try{
+      const r=await fetch('/api/rsvp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        slug:SLUG,name,side:$('rsvpSide').value,attend:$('rsvpAttend').value,
+        guests:$('rsvpGuests').value,phone:$('rsvpPhone').value,msg:$('rsvpMsg').value
+      })});
+      const j=await r.json();
+      if(!r.ok)throw new Error(j.error||'전달에 실패했어요');
+      closeModal();toast('참석 여부가 전달되었습니다 🤍');
+      $('rsvpForm').reset();$('rsvpGuests').value=1;
+      $('rsvpAttendSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.v==='yes'));
+      $('rsvpAttend').value='yes';
+    }catch(err){toast('⚠️ '+err.message);}
+    btn.disabled=false;btn.textContent='전달하기';
+  });
+  if(mode==='button'){
+    $('rsvpBtnWrap').style.display='block';
+    $('rsvpOpenBtn').addEventListener('click',openModal);
+  }else if(mode==='popup'){
+    if(!sessionStorage.getItem('rsvpShown')){
+      setTimeout(()=>{openModal();sessionStorage.setItem('rsvpShown','1');},1200);
+    }
+  }
+})();
+
+/* 게스트 스냅 */
+(function(){
+  if(!D.snapOn)return;
+  const openDate=D.snapOpenDate;
+  const todayKST=new Date(new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date())+'T00:00:00+09:00');
+  const isOpen=!openDate || new Date(openDate+'T00:00:00+09:00')<=todayKST;
+  $('snapSec').style.display='block';
+  if(D.snapTitle)$('snapTitleEl').textContent=D.snapTitle;
+  $('snapDescEl').textContent=D.snapDesc||'예식이 진행되는 동안 자유롭게 찍어주신 사진을 올려주세요. 저희 부부에게 소중한 선물이 됩니다.';
+  const btn=$('snapBtn'),file=$('snapFile'),prog=$('snapProgress');
+  if(!isOpen){
+    btn.disabled=true;
+    btn.textContent=`${openDate}부터 업로드할 수 있어요`;
+    return;
+  }
+  // 업로드 전 사진을 화면에서 보기 좋은 크기(최대 2000px)로 줄이고 화질을 살짝 압축해요.
+  // 서버가 한 번에 받을 수 있는 용량이 4MB로 정해져 있어서, 최근 고화소 스마트폰 사진은
+  // 원본 그대로 보내면 종종 4MB를 넘어 업로드가 실패하기 때문이에요.
+  function resizeImage(fileObj){
+    return new Promise((resolve,reject)=>{
+      const img=new Image();
+      const fr=new FileReader();
+      fr.onload=()=>{img.onload=()=>{
+        const MAX=2000;
+        let {width:w,height:h}=img;
+        if(w>MAX||h>MAX){
+          if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}
+        }
+        const canvas=document.createElement('canvas');
+        canvas.width=w;canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',0.85));
+      };img.onerror=reject;img.src=fr.result;};
+      fr.onerror=reject;
+      fr.readAsDataURL(fileObj);
+    });
+  }
+  btn.addEventListener('click',()=>file.click());
+  file.addEventListener('change',async e=>{
+    const files=[...e.target.files];file.value='';
+    if(!files.length)return;
+    if(!SLUG){toast('미리보기에서는 업로드할 수 없어요');return;}
+    btn.disabled=true;
+    let ok=0;
+    for(let i=0;i<files.length;i++){
+      prog.textContent=`업로드 중 ${i+1} / ${files.length}`;
+      try{
+        const dataUrl=await resizeImage(files[i]);
+        const r=await fetch('/api/snap',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:SLUG,dataUrl,name:files[i].name})});
+        const j=await r.json();
+        if(!r.ok)throw new Error(j.error||'업로드 실패');
+        ok++;
+      }catch(err){toast('⚠️ '+files[i].name+': '+err.message);}
+    }
+    prog.textContent=ok?`${ok}장 업로드 완료 🤍`:'업로드에 실패했어요';
+    btn.disabled=false;
+  });
+})();
 
 /* 푸터 */
 $('footMsg').textContent=D.footMsg||`저희 두 사람의 새로운 시작을\n함께해 주셔서 감사합니다.`;

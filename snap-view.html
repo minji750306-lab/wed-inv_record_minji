@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!--
+  📄 snap-view.html — 게스트 스냅 사진 확인 페이지
+  주소: /snap-view.html
+  청첩장 주소(슬러그) + 그 청첩장의 수정 비밀번호를 입력하면
+  본인만 하객들이 올린 사진을 보고 다운로드할 수 있어요.
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>게스트 스냅 확인</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#4A3238;--sage:#C08A96;--line:#EBDCDE;--cream:#FAF5F4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--ink);padding:28px 18px}
+.wrap{max-width:680px;margin:0 auto}
+h1{font-size:18px;margin-bottom:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
+input{width:100%;border:1px solid var(--line);border-radius:9px;padding:12px 14px;font-size:14px;font-family:inherit;background:var(--cream);margin-bottom:10px}
+button{border:0;border-radius:10px;padding:13px 20px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;background:var(--ink);color:#fff;width:100%}
+.hint{font-size:12px;color:#9a8f92;margin-top:8px;line-height:1.8}
+#msg{font-size:13px;color:#B0765E;margin-top:10px;min-height:18px}
+.top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.top-row button{width:auto;background:#fff;border:1px solid var(--line);color:var(--ink);padding:9px 14px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.grid a{display:block;position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--cream)}
+.grid img{width:100%;height:100%;object-fit:cover}
+.cnt{font-size:13px;color:#9a8f92;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📸 게스트 스냅 확인</h1>
+
+  <div class="card" id="loginCard">
+    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:8px">청첩장 주소 (슬러그)</label>
+    <input id="slug" placeholder="예: cheolsu-younghee">
+    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:8px">수정 비밀번호</label>
+    <input id="editKey" type="password" placeholder="청첩장 만들 때 정한 비밀번호">
+    <button id="loginBtn">확인하기</button>
+    <div id="msg"></div>
+    <div class="hint">본인이 만든 청첩장의 주소와 수정 비밀번호를 입력하면 하객들이 올린 사진을 볼 수 있어요. 사진 링크는 다른 사람에게 공유하지 마세요.</div>
+  </div>
+
+  <div class="card" id="listCard" style="display:none">
+    <div class="top-row">
+      <div class="cnt" id="cnt" style="margin:0"></div>
+      <button id="refreshBtn">↺ 새로고침</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let SLUG='',KEY='';
+async function load(){
+  const r=await fetch(`/api/snap?slug=${encodeURIComponent(SLUG)}&editKey=${encodeURIComponent(KEY)}`);
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error||'실패');
+  return j.items;
+}
+function render(items){
+  $('cnt').textContent=`총 ${items.length}장 · 사진을 누르면 원본을 새 창에서 열어요`;
+  const g=$('grid');g.innerHTML='';
+  if(!items.length){g.innerHTML='<p style="color:#9a8f92;font-size:13px">아직 올라온 사진이 없어요</p>';return;}
+  items.forEach(it=>{
+    const a=document.createElement('a');
+    a.href=it.url;a.target='_blank';a.rel='noopener';
+    a.innerHTML=`<img src="${it.url}" loading="lazy" alt="">`;
+    g.appendChild(a);
+  });
+}
+$('loginBtn').addEventListener('click',async()=>{
+  SLUG=$('slug').value.trim().toLowerCase();KEY=$('editKey').value;
+  $('msg').textContent='';
+  if(!SLUG){$('msg').textContent='⚠️ 청첩장 주소를 입력해 주세요.';return;}
+  try{
+    const items=await load();
+    $('loginCard').style.display='none';
+    $('listCard').style.display='block';
+    render(items);
+  }catch(e){$('msg').textContent='⚠️ '+e.message;}
+});
+$('editKey').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click();});
+$('refreshBtn').addEventListener('click',async()=>{
+  try{render(await load());}catch(e){alert(e.message);}
+});
+
+(function(){
+  const qs=new URLSearchParams(location.search);
+  if(qs.get('slug'))$('slug').value=qs.get('slug');
+})();
+</script>
+</body>
+</html>
