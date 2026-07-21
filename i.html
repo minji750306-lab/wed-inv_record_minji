@@ -309,7 +309,13 @@ async function loadData(){
   if(qs.get('preview')){
     try{return JSON.parse(sessionStorage.getItem('wpreview'));}catch(e){return null;}
   }
-  const id=qs.get('id');
+  let id=qs.get('id');
+  if(!id){
+    // vercel.json의 rewrite는 브라우저 주소창을 바꾸지 않으므로
+    // /슬러그 형태의 예쁜 링크는 경로(pathname)에서 직접 슬러그를 읽어온다.
+    const seg=location.pathname.replace(/^\/+|\/+$/g,'');
+    if(seg && !/\.(html?|json|js|css|png|jpg|jpeg|svg|ico)$/i.test(seg)) id=seg;
+  }
   if(id){
     try{
       const r=await fetch('/api/get?id='+encodeURIComponent(id));
