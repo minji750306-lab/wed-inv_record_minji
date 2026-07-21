@@ -3,6 +3,6 @@
     { "path": "/api/cleanup", "schedule": "0 19 * * *" }
   ],
   "rewrites": [
-    { "source": "/:slug((?!api/|index\\.html|i\\.html|favicon).+)", "destination": "/i.html" }
+    { "source": "/:slug((?!api/|index\\.html|i\\.html|favicon).+)", "destination": "/i.html?id=:slug" }
   ]
 }
