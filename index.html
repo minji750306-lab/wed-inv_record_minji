@@ -694,6 +694,10 @@ function save(){
   if(ogUrl)updateOgPreviewText();
 }
 IDS.forEach(id=>$(id).addEventListener('input',save));
+/* ── 링크 공유 미리보기 사진(자르기) ── */
+let ogRawImg=null,ogState={x:0,y:0,scale:1,zoom:1},ogUrl='';
+const OG_EXPORT_W=1200,OG_EXPORT_H=630;
+
 (function restore(){
   let d;try{d=JSON.parse(localStorage.getItem('wedit2'));}catch(e){}
   if(!d){addAccRow('accG');addAccRow('accB');markHeroStyle();return;}
@@ -714,8 +718,6 @@ IDS.forEach(id=>$(id).addEventListener('input',save));
 })();
 
 /* ── 링크 공유 미리보기 사진(자르기) ── */
-let ogRawImg=null,ogState={x:0,y:0,scale:1,zoom:1},ogUrl='';
-const OG_EXPORT_W=1200,OG_EXPORT_H=630;
 $('ogPickBtn').addEventListener('click',()=>$('ogFile').click());
 $('ogFile').addEventListener('change',e=>{
   const f=e.target.files[0];e.target.value='';
