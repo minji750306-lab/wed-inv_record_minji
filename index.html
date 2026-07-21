@@ -222,7 +222,7 @@ header h1 span{color:var(--sage)}
       <div class="thumbs" id="heroThumb"></div>
     </div>
     <div class="f">
-      <label>갤러리 사진 <small>여러 장 · 1:1 정방형 비율로 3장씩 보이고, 클릭 시 원본 크기로 볼 수 있어요.</small></label>
+      <label>갤러리 사진 <small>여러 장 · 1:1 정방형 비율로 3장씩 보이고, 클릭 시 원본 크기로 보여져요.</small></label>
       <input type="file" id="galFile" accept="image/*" multiple hidden>
       <div class="thumbs" id="galThumbs"><button type="button" class="addtile" id="galAdd">＋</button></div>
     </div>
@@ -232,7 +232,7 @@ header h1 span{color:var(--sage)}
       <input id="heroStyle" type="hidden" value="classic">
     </div>
     <div class="f">
-      <label>컬러 <small>색상표를 누르거나 컬러코드(#으로 시작)를 직접 입력하세요</small></label>
+      <label>컬러 <small>· 수정 가능해요. 색상표를 누르거나 컬러코드(#으로 시작)를 직접 입력하세요</small></label>
       <div class="preset" id="presets"></div>
       <div class="colors">
         <div class="crow">
@@ -263,10 +263,10 @@ header h1 span{color:var(--sage)}
 
   <div class="card">
     <h2><em>5.</em>교통편 <small>· 비워둔 항목은 표시되지 않아요.</small></h2>
-    <div class="f"><label>지하철</label><textarea id="subway" placeholder="예: 2호선 OO역 3번 출구 도보 5분"></textarea></div>
-    <div class="f"><label>버스</label><textarea id="bus" placeholder="예: OO정류장 하차 (100, 200, 300번)"></textarea></div>
-    <div class="f"><label>자가용 · 주차</label><textarea id="car" placeholder="예: 내비게이션에 'OO웨딩홀' 검색&#10;건물 주차장 2시간 무료"></textarea></div>
-    <div class="f"><label>전세버스</label><textarea id="charter" placeholder="예: 출발지: OO / 출발 시간: 10:30"></textarea></div>
+    <div class="f"><label>지하철</label><textarea id="subway" placeholder="(예시) 2호선 OO역 3번 출구 도보 5분"></textarea></div>
+    <div class="f"><label>버스</label><textarea id="bus" placeholder="(예시) OO정류장 하차 (100, 200, 300번)"></textarea></div>
+    <div class="f"><label>자가용 · 주차</label><textarea id="car" placeholder="(예시) 내비게이션에 'OO웨딩홀' 검색&#10;건물 주차장 2시간 무료"></textarea></div>
+    <div class="f"><label>전세버스</label><textarea id="charter" placeholder="(예시) 출발지: OO / 출발 시간: 10:30"></textarea></div>
   </div>
 
   <div class="card">
@@ -283,14 +283,14 @@ header h1 span{color:var(--sage)}
 
   <div class="card">
     <h2><em>7.</em>참석 여부 확인(RSVP) <small>· '사용 안 함'으로 두면 표시되지 않아요.</small></h2>
-    <div class="f"><label>노출 방식</label>
+    <div class="f"><label>노출 방식 선택</label>
       <select id="rsvpMode">
         <option value="off">사용 안 함</option>
-        <option value="inline">오시는 길 다음에 바로 보이게 표시</option>
-        <option value="popup">청첩장 열자마자 자동으로 표시</option>
+        <option value="inline">오시는 길 다음 순서에 표시</option>
+        <option value="popup">청첩장 링크 클릭 시 팝업으로 표시</option>
       </select>
     </div>
-    <div class="f"><label>제목</label><input id="rsvpTitle" placeholder="참석 여부 안내"></div>
+    <div class="f"><label>제목</label><input id="rsvpTitle" placeholder="(예시) 참석 여부 확인 안내"></div>
     <div class="f"><label>안내 문구</label><textarea id="rsvpDesc" placeholder="귀한 걸음 해주시는 모든 분을 정성껏 모시고자 참석 여부를 여쭙습니다."></textarea></div>
   </div>
 
@@ -300,7 +300,7 @@ header h1 span{color:var(--sage)}
       <select id="snapOn"><option value="">사용 안 함</option><option value="1">사용함</option></select>
     </div>
     <div class="f"><label>제목</label><input id="snapTitle" placeholder="게스트 스냅"></div>
-    <div class="f"><label>안내 문구</label><textarea id="snapDesc" placeholder="예식이 진행되는 동안 자유롭게 사진을 찍어주세요. 아래 버튼으로 올려주시면 저희 부부에게 소중한 선물이 됩니다."></textarea></div>
+    <div class="f"><label>안내 문구</label><textarea id="snapDesc" placeholder="(예시) 예식이 진행되는 동안 자유롭게 사진을 찍어주세요. 아래 버튼으로 올려주시면 저희 부부에게 소중한 선물이 됩니다."></textarea></div>
     <div class="f"><label>업로드 오픈일 <small>· 비워두면 언제든 업로드 가능</small></label><input id="snapOpenDate" type="date"></div>
     <div class="f"><label>업로드된 사진 확인하기 <small>· 청첩장을 만든 뒤 아래 페이지에서 주소·수정 비밀번호로 나만 볼 수 있어요</small></label>
       <a href="/snap-view.html" target="_blank" style="font-size:13px;color:var(--sage)">/snap-view.html 열어서 확인하기 →</a>
@@ -316,7 +316,7 @@ header h1 span{color:var(--sage)}
       <div class="slugrow"><span id="baseUrl"></span><input id="slug" placeholder="cheolsu-younghee" autocapitalize="off" autocomplete="off"></div>
     </div>
     <div class="f">
-      <label>🔒수정 비밀번호 <small>4자 이상 · 간단한 숫자·단어로 정하세요. 수정 시 필요하니 꼭 기억하세요!</small></label>
+      <label>🔒수정 비밀번호 <small>4자 이상의 간단한 숫자·단어로 정하세요 · 수정/하객스냅 확인/참석여부 확인 시 필요하니 꼭 기억하세요! (관리자도 알 수 없어요) </small></label>
       <input id="editKey" type="text" autocomplete="off" name="edit-code" placeholder="예: 20261024">
     </div>
     <div class="f">
@@ -326,10 +326,10 @@ header h1 span{color:var(--sage)}
   </div>
 
   <div class="card">
-    <h2>💬 링크 공유 미리보기 <small>· 카카오톡·문자로 링크를 보낼 때 보여질 사진·문구예요. 비워두면 표지 사진·감성문구를 그대로 따라가요.</small></h2>
+    <h2>💬 링크 공유 미리보기 <small>· 카카오톡·문자로 링크를 보낼 때 보여질 사진·문구예요.</small></h2>
     <div class="f">
-      <label>미리보기 설명 문구</label>
-      <textarea id="ogDesc" placeholder="비워두면 표지의 감성문구(리드 문구)가 사용돼요."></textarea>
+      <label>미리보기 문구</label>
+      <textarea id="ogDesc" placeholder="비워두면 표지 감성문구가 사용돼요."></textarea>
     </div>
     <div class="f">
       <input type="file" id="ogFile" accept="image/*" style="display:none">
