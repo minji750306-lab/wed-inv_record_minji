@@ -11,6 +11,9 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: '성함을 입력해 주세요.' });
       if (attend !== 'yes' && attend !== 'no')
         return res.status(400).json({ error: '참석 여부를 선택해 주세요.' });
+      const tel = (phone || '').replace(/[^0-9-]/g, '');
+      if (!/^010-\d{4}-\d{4}$/.test(tel))
+        return res.status(400).json({ error: '연락처를 010-1234-5678 형식으로 입력해 주세요.' });
       try { await head(`inv/${s}.json`); }
       catch (e) { return res.status(404).json({ error: '청첩장을 찾을 수 없어요.' }); }
 
@@ -19,7 +22,7 @@ export default async function handler(req, res) {
         side: (side || '').slice(0, 10),
         attend,
         guests: Math.max(1, Math.min(20, parseInt(guests) || 1)),
-        phone: (phone || '').replace(/[^0-9-]/g, '').slice(0, 20),
+        phone: tel,
         msg: (msg || '').slice(0, 200),
         at: Date.now()
       };
