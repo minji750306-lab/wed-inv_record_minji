@@ -56,6 +56,9 @@ section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
 /* fade up */
 .fu{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s ease}
 .fu.on{opacity:1;transform:none}
+/* 첫 화면(표지)만 천천히 올라오게 — 0.9초 → 1.8초 (2배)
+   더 느리게/빠르게 하고 싶으면 아래 1.8s 두 곳의 숫자만 바꾸면 돼요 */
+.hero .fu{transition:opacity 1.8s ease,transform 1.8s ease}
 
 /* ── HERO ── */
 .hero{position:relative;height:100dvh;min-height:560px;overflow:hidden;padding:0}
@@ -212,6 +215,8 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
 #rsvpForm textarea{resize:none;min-height:60px}
 .rsvp-submit{width:100%;border:0;background:var(--ink);color:var(--cream);padding:14px 0;border-radius:9px;font-size:14.5px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;margin-top:4px}
 .rsvp-submit:disabled{opacity:.6}
+.rsvp-privacy{font-family:'Noto Sans KR',sans-serif;font-size:10.5px;font-weight:300;line-height:1.7;color:var(--muted);opacity:.8;text-align:center;margin:2px 0 6px}
+.rsvp-privacy a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 
 /* ── 게스트 스냅 ── */
 #snapSec{text-align:center}
@@ -345,6 +350,7 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
       <input id="rsvpGuests" type="number" min="1" max="20" value="1" placeholder="참석 인원 (본인 포함)">
       <input id="rsvpPhone" type="tel" placeholder="연락처 (선택)">
       <textarea id="rsvpMsg" placeholder="전하실 말씀 (선택)"></textarea>
+      <p class="rsvp-privacy" id="rsvpPrivacy"></p>
       <button type="submit" class="rsvp-submit">전달하기</button>
     </form>
     </div>
@@ -352,6 +358,11 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
 </div>
 
 <script>
+/* ── RSVP 개인정보 안내문 (참석 여부 폼 아래에 작고 연하게 표시돼요) ──
+   PRIVACY_URL 을 비우면 링크 없이 글씨만 표시됩니다.                     */
+const PRIVACY_TEXT      = '연락처 정보 제출 시 {개인정보처리방침}에 동의하는 것으로 간주됩니다';
+const PRIVACY_URL       = '/privacy.html';
+
 const CREDIT_TEXT = 'made by 밍지로움';  /* ← 크레딧 문구는 여기서만 바꾸면 돼요 */
 const CREDIT_URL  = 'https://blog.naver.com/record_minji';  /* ← 출처 링크 (선택) 예: 'https://instagram.com/아이디' — 비우면 글씨만 표시돼요 */
 {
@@ -597,6 +608,17 @@ if(!anyAcc)$('accSec').style.display='none';
   if(mode==='off')return;
   $('rsvpTitleEl').textContent=D.rsvpTitle||'참석 여부 안내';
   $('rsvpDescEl').textContent=D.rsvpDesc||'귀한 걸음 해주시는 모든 분을 정성껏 모시고자 참석 여부를 여쭙습니다.';
+  /* 개인정보 안내문: {중괄호} 안의 글자만 링크가 돼요 */
+  (function(){
+    const el=$('rsvpPrivacy');
+    const m=PRIVACY_TEXT.match(/^(.*?)\{(.+?)\}(.*)$/);
+    if(!m||!PRIVACY_URL){el.textContent=PRIVACY_TEXT.replace(/[{}]/g,'');return;}
+    el.appendChild(document.createTextNode(m[1]));
+    const a=document.createElement('a');
+    a.href=PRIVACY_URL;a.target='_blank';a.rel='noopener';a.textContent=m[2];
+    el.appendChild(a);
+    el.appendChild(document.createTextNode(m[3]));
+  })();
   const modal=$('rsvpModal');
   function openModal(){modal.classList.add('open');}
   function closeModal(){modal.classList.remove('open');}

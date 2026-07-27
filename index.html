@@ -81,7 +81,7 @@ header h1 span{color:var(--sage)}
 .crow input[type=text]{width:88px;border:1px solid var(--line);border-radius:7px;padding:7px 8px;font-size:12.5px;font-family:monospace;text-transform:uppercase}
 .preset{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .preset button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
-.preset .dot{width:12px;height:12px;border-radius:50%}
+.preset .dot{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.09)}
 /* 표지 선택 카드 + 미리보기 */
 .hstyles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 @media(max-width:560px){.hstyles{grid-template-columns:repeat(2,1fr)}}
@@ -232,7 +232,7 @@ header h1 span{color:var(--sage)}
       <input id="heroStyle" type="hidden" value="classic">
     </div>
     <div class="f">
-      <label>컬러 <small>· 수정 가능해요. 색상표를 누르거나 컬러코드(#으로 시작)를 직접 입력하세요</small></label>
+      <label>컬러 <small>· 수정 가능해요. 색상표를 누르거나 컬러코드(#으로 시작)를 직접 입력하세요 · 메인 컬러는 흰 글씨가 올라가는 배경색이라 어느 정도 진한 색이 좋아요</small></label>
       <div class="preset" id="presets"></div>
       <div class="colors">
         <div class="crow">
@@ -292,6 +292,13 @@ header h1 span{color:var(--sage)}
     </div>
     <div class="f"><label>제목</label><input id="rsvpTitle" placeholder="(예시) 참석 여부 확인 안내"></div>
     <div class="f"><label>안내 문구</label><textarea id="rsvpDesc" placeholder="귀한 걸음 해주시는 모든 분을 정성껏 모시고자 참석 여부를 여쭙습니다."></textarea></div>
+    <div class="f" style="margin-bottom:0">
+      <div style="font-size:12.5px;color:#8a8f83;line-height:1.9">
+        하객이 연락처를 남기는 항목이 있어, 참석 여부 폼 아래에 작은 안내문
+        "연락처 정보 제출 시 개인정보처리방침에 동의하는 것으로 간주됩니다"가 자동으로 표시돼요
+        (<a href="/privacy.html" target="_blank" style="color:var(--sage)">방침 내용 보기</a>).
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -323,6 +330,13 @@ header h1 span{color:var(--sage)}
     <div class="f">
       <label>🗓️정보 삭제 희망일 <small>생성일 기준 최대 12개월 · 처음 정한 날짜는 이후 수정으로 변경할 수 없어요</small></label>
       <input id="deleteDate" type="date">
+    </div>
+    <div class="f" style="margin-bottom:0">
+      <label>🗑️먼저 지우고 싶을 때 <small>삭제 희망일을 기다리지 않아도 돼요</small></label>
+      <div style="font-size:12.5px;color:#8a8f83;line-height:1.9">
+        <a href="/delete.html" target="_blank" style="color:var(--sage)">/delete.html</a> 에서 주소와 수정 비밀번호를 넣으면
+        청첩장 본문·사진·참석 응답·스냅 사진이 <b>즉시 모두 삭제</b>돼요. 되돌릴 수는 없어요.
+      </div>
     </div>
   </div>
 
@@ -365,7 +379,8 @@ header h1 span{color:var(--sage)}
     </div>
     <div style="margin-top:16px;font-size:12.5px;color:#9a8f92;line-height:2">
       참석 여부 응답 확인: <a id="rsvpViewLink" target="_blank" style="color:var(--sage)">/rsvp-view.html →</a><br>
-      게스트 스냅 사진 확인: <a id="snapViewLink" target="_blank" style="color:var(--sage)">/snap-view.html →</a>
+      게스트 스냅 사진 확인: <a id="snapViewLink" target="_blank" style="color:var(--sage)">/snap-view.html →</a><br>
+      직접 삭제하기: <a id="delViewLink" target="_blank" style="color:var(--sage)">/delete.html →</a>
     </div>
   </div>
   <div class="pagefoot"><span id="pageCredit"></span><a id="pageCreditLink" target="_blank" rel="noopener"></a></div>
@@ -478,18 +493,26 @@ COLOR_PAIRS.forEach(([c,t])=>{
     if(/^#[0-9a-fA-F]{6}$/.test(v)){$(c).value=v;save();}
   });
 });
+/* [이름, 메인(진한 배경·글자), 배경, 포인트, 보조]
+   파스텔 4종은 배경·포인트·보조를 밝게 하고, 메인 컬러만 같은 색계열의
+   깊은 톤으로 유지했어요. 메인 컬러는 흰 글씨가 올라가는 진한 블록의
+   배경색이라 너무 밝게 하면 글씨가 안 보이기 때문이에요.              */
 const PRESETS=[
   ['올리브 그린','#2E3A2C','#F6F4EC','#C0A97E','#A8B096'],
   ['더스티 로즈','#4A2E33','#FAF4F2','#C48A94','#D8B4BA'],
   ['딥 네이비','#1F2A40','#F4F6FA','#B9A47C','#9BB0C8'],
   ['테라코타','#3A241A','#FAF3EC','#C4785A','#D8B49C'],
-  ['모던 블랙','#1E1E1E','#F7F6F3','#B9A47C','#B8B8B0']
+  ['모던 블랙','#1E1E1E','#F7F6F3','#B9A47C','#B8B8B0'],
+  ['파스텔 핑크','#7A5560','#FFF6F8','#D6839A','#F2C7D2'],
+  ['파스텔 옐로','#6E5C34','#FFFCF0','#C9A03C','#F0E2AE'],
+  ['파스텔 블루','#4A5C72','#F4F9FD','#7FA6CE','#C7DCEF'],
+  ['밝은 베이지','#6E5E4C','#FCF9F3','#BFA379','#E2D6C2']
 ];
 const pw=$('presets');
 PRESETS.forEach(([name,ink,cream,gold,sage])=>{
   const b=document.createElement('button');
   b.type='button';
-  b.innerHTML=`<span class="dot" style="background:${ink}"></span><span class="dot" style="background:${gold}"></span>${name}`;
+  b.innerHTML=`<span class="dot" style="background:${ink}"></span><span class="dot" style="background:${gold}"></span><span class="dot" style="background:${sage}"></span>${name}`;
   b.addEventListener('click',()=>{
     [['cInk',ink],['cCream',cream],['cGold',gold],['cSage',sage]].forEach(([id,v])=>{
       $(id).value=v;$(id+'T').value=v.toUpperCase();
@@ -853,6 +876,7 @@ $('makeBtn').addEventListener('click',async()=>{
     $('openResult').href=url;
     $('rsvpViewLink').href=`/rsvp-view.html?slug=${encodeURIComponent(d.slug)}`;
     $('snapViewLink').href=`/snap-view.html?slug=${encodeURIComponent(d.slug)}`;
+    $('delViewLink').href=`/delete.html?slug=${encodeURIComponent(d.slug)}`;
     $('result').scrollIntoView({behavior:'smooth'});
     toast(j.updated?'기존 청첩장을 수정했어요 ✏️':'청첩장이 만들어졌어요 💌');
   }catch(e){toast('⚠️ '+e.message);}
