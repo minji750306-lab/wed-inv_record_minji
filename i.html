@@ -213,6 +213,13 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
 .rsvp-seg button.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
 #rsvpForm select,#rsvpForm input,#rsvpForm textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:12px 14px;font-size:13.5px;font-family:'Noto Sans KR',sans-serif;background:var(--white);color:var(--ink);margin-bottom:10px;-webkit-appearance:none}
 #rsvpForm textarea{resize:none;min-height:60px}
+/* 연락처 3칸 입력 */
+.rsvp-fl{font-family:'Noto Sans KR',sans-serif;font-size:11.5px;font-weight:300;color:var(--muted);text-align:left;margin:2px 0 6px}
+.rsvp-fl b{color:var(--gold);font-weight:400}
+.rsvp-tel{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+#rsvpForm .rsvp-tel input{flex:1;min-width:0;text-align:center;margin-bottom:0;letter-spacing:.02em}
+.rsvp-tel span{flex:0 0 auto;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:14px}
+.rsvp-tel .fixed{flex:0 0 62px;border:1px solid var(--line);border-radius:9px;padding:12px 0;text-align:center;background:var(--cream);color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13.5px}
 .rsvp-submit{width:100%;border:0;background:var(--ink);color:var(--cream);padding:14px 0;border-radius:9px;font-size:14.5px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;margin-top:4px}
 .rsvp-submit:disabled{opacity:.6}
 .rsvp-privacy{font-family:'Noto Sans KR',sans-serif;font-size:10.5px;font-weight:300;line-height:1.7;color:var(--muted);opacity:.8;text-align:center;margin:2px 0 6px}
@@ -348,7 +355,14 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
       </select>
       <input id="rsvpName" placeholder="성함" required>
       <input id="rsvpGuests" type="number" min="1" max="20" value="1" placeholder="참석 인원 (본인 포함)">
-      <input id="rsvpPhone" type="tel" placeholder="연락처 (선택)">
+      <div class="rsvp-fl">연락처 <b>*</b></div>
+      <div class="rsvp-tel">
+        <div class="fixed" aria-hidden="true">010</div>
+        <span>-</span>
+        <input id="rsvpPhone2" type="tel" inputmode="numeric" maxlength="4" placeholder="1234" aria-label="연락처 가운데 네 자리">
+        <span>-</span>
+        <input id="rsvpPhone3" type="tel" inputmode="numeric" maxlength="4" placeholder="5678" aria-label="연락처 뒤 네 자리">
+      </div>
       <textarea id="rsvpMsg" placeholder="전하실 말씀 (선택)"></textarea>
       <p class="rsvp-privacy" id="rsvpPrivacy"></p>
       <button type="submit" class="rsvp-submit">전달하기</button>
@@ -624,6 +638,26 @@ if(!anyAcc)$('accSec').style.display='none';
   function closeModal(){modal.classList.remove('open');}
   $('rsvpX').addEventListener('click',closeModal);
   modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+  /* 연락처 3칸: 숫자만 입력 · 다 채우면 다음 칸으로 · 지우면 앞 칸으로 */
+  /* 연락처: 앞자리 010 고정, 뒤 4-4 두 칸만 입력 */
+  const telParts=[$('rsvpPhone2'),$('rsvpPhone3')];
+  telParts.forEach((el,i)=>{
+    el.addEventListener('input',()=>{
+      el.value=el.value.replace(/[^0-9]/g,'');
+      if(el.value.length>=4&&i===0)telParts[1].focus();
+    });
+    el.addEventListener('keydown',e=>{
+      if(e.key==='Backspace'&&!el.value&&i>0)telParts[i-1].focus();
+    });
+  });
+  /* 01012345678 처럼 통째로 붙여넣어도 뒤 8자리만 알아서 나눠 담아요 */
+  telParts[0].addEventListener('paste',e=>{
+    const raw=(e.clipboardData||window.clipboardData).getData('text').replace(/[^0-9]/g,'');
+    if(raw.length<8)return;
+    e.preventDefault();
+    telParts[0].value=raw.slice(-8,-4);telParts[1].value=raw.slice(-4);
+    telParts[1].focus();
+  });
   $('rsvpAttendSeg').querySelectorAll('button').forEach(b=>{
     b.addEventListener('click',()=>{
       $('rsvpAttendSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
@@ -634,12 +668,18 @@ if(!anyAcc)$('accSec').style.display='none';
     e.preventDefault();
     const name=$('rsvpName').value.trim();
     if(!name){toast('성함을 입력해 주세요');return;}
+    const [t1,t2]=telParts.map(el=>el.value.trim());
+    if(!t1||!t2){toast('연락처를 입력해 주세요');(!t1?telParts[0]:telParts[1]).focus();return;}
+    if(!/^\d{4}$/.test(t1)||!/^\d{4}$/.test(t2)){
+      toast('연락처를 네 자리씩 입력해 주세요 (예: 010-1234-5678)');(!/^\d{4}$/.test(t1)?telParts[0]:telParts[1]).focus();return;
+    }
+    const phone=`010-${t1}-${t2}`;
     if(!SLUG){toast('미리보기에서는 전달되지 않아요');return;}
     const btn=e.target.querySelector('.rsvp-submit');btn.disabled=true;btn.textContent='전달 중...';
     try{
       const r=await fetch('/api/rsvp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
         slug:SLUG,name,side:$('rsvpSide').value,attend:$('rsvpAttend').value,
-        guests:$('rsvpGuests').value,phone:$('rsvpPhone').value,msg:$('rsvpMsg').value
+        guests:$('rsvpGuests').value,phone,msg:$('rsvpMsg').value
       })});
       const j=await r.json();
       if(!r.ok)throw new Error(j.error||'전달에 실패했어요');
