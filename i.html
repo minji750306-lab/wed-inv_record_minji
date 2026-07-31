@@ -94,12 +94,6 @@ section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
 .hero.style-frame .frameimg{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
 .hero.style-frame .info3{margin-top:20px;font-size:12.5px;line-height:2;color:var(--muted);font-weight:300}
 .hero.style-frame .datebig{font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:.28em;color:var(--ink);margin-top:16px}
-/* ── HERO 변형: 매거진형 ── */
-.hero.style-mag::before{content:"";position:absolute;inset:0;background:rgba(20,14,16,.24);z-index:1;pointer-events:none}
-.hero.style-mag .magcenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--white);text-align:center;padding:0 24px;z-index:2;text-shadow:0 1px 14px rgba(0,0,0,.55),0 0 2px rgba(0,0,0,.4)}
-.hero.style-mag .txt{z-index:2}
-.hero.style-mag .magtitle{font-family:'Great Vibes',cursive;font-size:58px;line-height:1.15;font-weight:400}
-.hero.style-mag .txt .lead{display:none}
 /* 꽃잎 */
 .petal{position:absolute;top:-4vh;border-radius:60% 40% 55% 45%/55% 60% 40% 45%;background:var(--sage-lt);opacity:.7;animation:fall linear infinite;pointer-events:none}
 @keyframes fall{
@@ -480,13 +474,6 @@ if(heroStyle==='arch'){
     <div class="info3">${dateLine}<br>${D.venue}${D.hall?' · '+D.hall:''}</div>
   </div>`;
 }else{
-  if(heroStyle==='mag'){
-    heroSec.classList.add('style-mag');
-    const mc=document.createElement('div');
-    mc.className='magcenter fu';
-    mc.innerHTML='<div class="magtitle">our<br>wedding<br>day</div>';
-    heroSec.insertBefore(mc,heroSec.querySelector('.txt'));
-  }
   $('heroImg').src=D.hero||'';
   $('heroImg').onerror=function(){this.onerror=null;this.style.display='none';this.parentElement.style.background='linear-gradient(160deg,#465243,#2E3A2C)';};
   $('lead').textContent=D.lead||'';
