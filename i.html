@@ -66,6 +66,12 @@ img{
   pointer-events:auto;
 }
 .lb img{touch-action:none}
+/* 표지 타일 미리보기 모드 — 표지 한 장만 보여줘요 */
+/* 표지 높이는 원래 비율 그대로 두고, 짧은 표지는 배경색으로 채워요 */
+#app.tilemode{box-shadow:none;min-height:700px;background:var(--cream)}
+#app.tilemode > section:not(.hero),#app.tilemode footer,#app.tilemode .fixed-share,#app.tilemode #toast{display:none!important}
+#app.tilemode .hero{min-height:0}
+#app.tilemode .fu{opacity:1!important;transform:none!important;transition:none!important}
 .serif-en{font-family:var(--f-en)}
 .sans{font-family:'Noto Sans KR',sans-serif}
 section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
@@ -505,7 +511,14 @@ function decode(hash){
 async function loadData(){
   const qs=new URLSearchParams(location.search);
   if(qs.get('preview')){
-    try{return JSON.parse(sessionStorage.getItem('wpreview'));}catch(e){return null;}
+    let p=null;
+    try{p=JSON.parse(sessionStorage.getItem('wpreview'));}catch(e){}
+    if(!p)return null;
+    /* 에디터의 표지 타일이 각각 다른 표지로 그려질 수 있게,
+       주소에 hs(표지)·th(테마)가 있으면 그 값으로 덮어써요 */
+    if(qs.get('hs'))p={...p,heroStyle:qs.get('hs')};
+    if(qs.get('th'))p={...p,theme:qs.get('th')};
+    return p;
   }
   let id=qs.get('id');
   if(!id){
@@ -531,6 +544,9 @@ async function loadData(){
 loadData().then(D=>{
 if(!D){document.getElementById('err').style.display='flex';return;}
 document.getElementById('app').style.display='block';
+/* 표지 타일 모드(tile=1): 표지만 즉시 보여주고 나머지는 감춰요 */
+const TILE=new URLSearchParams(location.search).get('tile')==='1';
+if(TILE)document.getElementById('app').classList.add('tilemode');
 
 /* 커스텀 컬러 적용 */
 if(D.colors){
@@ -665,6 +681,10 @@ if(HERO_HTML[heroStyle]){
 }
 
 /* 꽃잎 */
+if(TILE){
+  /* 타일에서는 표지 아래 내용과 애니메이션이 필요 없어요 */
+  document.querySelectorAll('.fu').forEach(e=>e.classList.add('on'));
+}
 const pw=$('petals')||document.createElement('div');
 for(let i=0;i<16;i++){
   const p=document.createElement('div');p.className='petal';
