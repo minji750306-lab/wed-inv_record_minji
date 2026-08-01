@@ -110,19 +110,35 @@ header h1 span{color:var(--sage)}
 .preset button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
 .preset .dot{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.09)}
 /* 표지 선택 카드 + 미리보기 */
-.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
-.themes .th{border:2px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;padding:11px 8px;font-family:inherit;text-align:center;line-height:1.5}
-.themes .th b{display:block;font-size:13px;font-weight:500;color:var(--ink)}
-.themes .th span{display:block;font-size:10.5px;color:#9a9590;margin-top:3px;word-break:keep-all}
-.themes .th.on{border-color:var(--sage);background:#FBF7F8}
-.hstyles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+/* 테마 칩 — 한 줄로 작게 */
+.themes{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.themes .th{border:1px solid var(--line);border-radius:99px;background:#fff;cursor:pointer;padding:7px 14px;font-family:inherit;font-size:12.5px;color:var(--ink);line-height:1.4}
+.themes .th b{font-weight:500}
+.themes .th span{display:none}
+.themes .th.on{border-color:var(--sage);background:#FBF7F8;color:var(--sage)}
+/* 표지 미리보기 — 한 화면에 다 보이도록 작게 */
+.hgroup{font-size:11.5px;color:#9a9590;margin:2px 0 7px;letter-spacing:.02em}
+.hgroup:not(:first-child){margin-top:14px}
+.hstyles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:4px}
+@media(max-width:420px){.hstyles{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:560px){.hstyles{grid-template-columns:repeat(2,1fr)}}
-.hs{border:2px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;padding:7px;font-family:inherit}
+.hs{border:2px solid transparent;border-radius:8px;background:none;cursor:pointer;padding:3px;font-family:inherit}
 .hs.on{border-color:var(--ink)}
-.hs .mini{aspect-ratio:4/5;border-radius:6px;overflow:hidden;position:relative;background:#DED4D6}
-.hs .mname{font-size:11px;margin-top:6px;text-align:center;color:var(--ink)}
+.hs .mini{aspect-ratio:3/4;border-radius:5px;overflow:hidden;position:relative;background:#DED4D6}
+.hs .mname{font-size:10px;margin-top:4px;text-align:center;color:#8a8f83;line-height:1.3;word-break:keep-all}
+.hs.on .mname{color:var(--ink)}
 .hs .ph{position:absolute;inset:0;background:linear-gradient(150deg,#C9B8BC,#A8969A)}
-.hs .ln{position:absolute;left:20%;right:20%;height:3px;border-radius:2px;background:rgba(255,255,255,.85)}
+.hs .ln{position:absolute;left:20%;right:20%;height:2px;border-radius:2px;background:rgba(255,255,255,.85)}
+/* 갤러리 사용 스위치 (카드 안쪽 작은 버전) */
+.subsw{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:#8a8f83;margin-left:auto}
+.subsw input{position:absolute;opacity:0;width:0;height:0}
+.subsw i{width:34px;height:20px;border-radius:99px;background:#DED7D9;position:relative;transition:background .18s}
+.subsw i::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.subsw input:checked + i{background:var(--sage)}
+.subsw input:checked + i::after{transform:translateX(14px)}
+.lblrow{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.galhint{display:block;font-size:11.5px;color:#9a9590;line-height:1.7;margin-bottom:9px}
+.f.off .thumbs,.f.off .galhint{display:none}
 .hprev{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px;margin-top:4px}
 .hprev .hp-label{font-size:11.5px;color:#9a8f92;margin-bottom:8px}
 .hprev .hp-stage{max-width:210px;margin:0 auto;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
@@ -317,7 +333,11 @@ header h1 span{color:var(--sage)}
       <div class="thumbs" id="heroThumb"></div>
     </div>
     <div class="f">
-      <label>갤러리 사진 <small>여러 장 · 1:1 정방형 비율로 3장씩 보이고, 클릭 시 원본 크기로 보여져요.</small></label>
+      <div class="lblrow">
+        <label style="margin:0">갤러리 사진</label>
+        <label class="subsw"><input type="checkbox" id="galOn"><i></i><span>사용</span></label>
+      </div>
+      <small class="galhint">여러 장 · 1:1 정방형 비율로 3장씩 보이고, 클릭 시 원본 크기로 보여져요.</small>
       <input type="file" id="galFile" accept="image/*" multiple hidden>
       <div class="thumbs" id="galThumbs"><button type="button" class="addtile" id="galAdd">＋</button></div>
     </div>
@@ -326,7 +346,7 @@ header h1 span{color:var(--sage)}
       <div class="themes" id="themeTabs"></div>
       <input id="theme" type="hidden" value="classic">
       <label style="margin-top:16px">표지 디자인</label>
-      <div class="hstyles" id="heroStyles"></div>
+      <div id="heroStyles"></div>
       <input id="heroStyle" type="hidden" value="classic">
     </div>
     <div class="f">
@@ -556,7 +576,7 @@ $('date').addEventListener('change',syncDeleteRange);
 /* ── 사용/미사용 스위치 ─────────────────────────────
    data-sec 이 붙은 카드마다 스위치를 달고, 끄면 내용이 접혀요.
    기본값은 fam·words·way·acc 는 켜짐, rsvp·snap 은 꺼짐이에요.   */
-const SEC_DEFAULT={fam:true,words:true,way:true,acc:true,rsvp:false,snap:false};
+const SEC_DEFAULT={fam:true,words:true,way:true,acc:true,rsvp:false,snap:false,gal:true};
 const secOn={...SEC_DEFAULT};
 document.querySelectorAll('.card[data-sec]').forEach(card=>{
   const key=card.dataset.sec;
@@ -584,6 +604,7 @@ document.querySelectorAll('.card[data-sec]').forEach(card=>{
 function applySecOn(o){
   Object.keys(secOn).forEach(k=>{
     if(o&&o[k]!==undefined)secOn[k]=!!o[k];
+    if(k==='gal'){const c=$('galOn');if(c){c.checked=secOn.gal;c._sync&&c._sync();}return;}
     const card=document.querySelector(`.card[data-sec="${k}"]`);
     if(!card||!card._sw)return;
     card._sw.checked=secOn[k];
@@ -591,6 +612,19 @@ function applySecOn(o){
     card.querySelector('.sw span').textContent=secOn[k]?'사용':'사용 안 함';
   });
 }
+
+/* ── 갤러리 사용/미사용 ── */
+(function(){
+  const cb=$('galOn'), field=cb.closest('.f');
+  function sync(){
+    secOn.gal=cb.checked;
+    field.classList.toggle('off',!cb.checked);
+    cb.parentElement.querySelector('span').textContent=cb.checked?'사용':'사용 안 함';
+  }
+  cb.checked=true;sync();
+  cb.addEventListener('change',()=>{sync();save();});
+  cb._sync=sync;
+})();
 
 /* ── 샘플 문구 넣기 ──────────────────────────────────
    입력칸 아래 작은 버튼을 눌러 예시 문구를 채워 넣어요.
@@ -692,16 +726,29 @@ THEMES.forEach(([v,label,desc])=>{
 });
 
 const hw=$('heroStyles');
+/* 표지는 테마 구분 없이 전부 보여주고, 고르면 그 테마로 자동 전환돼요 */
 function markTheme(){
   const t=$('theme').value||'classic';
   tw2.querySelectorAll('.th').forEach(x=>x.classList.toggle('on',x.dataset.v===t));
   hw.innerHTML='';
-  HERO_STYLES.filter(h=>h[3]===t).forEach(([v,label,mock])=>{
-    const b=document.createElement('button');
-    b.type='button';b.className='hs';b.dataset.v=v;
-    b.innerHTML=`<div class="mini">${mock}</div><div class="mname">${label}</div>`;
-    b.addEventListener('click',()=>{$('heroStyle').value=v;markHeroStyle();save();});
-    hw.appendChild(b);
+  THEMES.forEach(([tv,tlabel])=>{
+    const h=document.createElement('div');
+    h.className='hgroup';h.textContent=tlabel;
+    hw.appendChild(h);
+    const row=document.createElement('div');
+    row.className='hstyles';
+    HERO_STYLES.filter(x=>x[3]===tv).forEach(([v,label,mock])=>{
+      const b=document.createElement('button');
+      b.type='button';b.className='hs';b.dataset.v=v;
+      b.innerHTML=`<div class="mini">${mock}</div><div class="mname">${label}</div>`;
+      b.addEventListener('click',()=>{
+        $('heroStyle').value=v;
+        $('theme').value=tv;          /* 표지를 고르면 테마도 따라가요 */
+        markTheme();save();
+      });
+      row.appendChild(b);
+    });
+    hw.appendChild(row);
   });
   markHeroStyle();
 }
