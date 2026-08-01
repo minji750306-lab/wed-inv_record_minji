@@ -9,6 +9,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 페이지 전체(글자 포함)의 확대까지 막고 싶으면 위 줄을 지우고 아래 줄의 주석을 푸세요.
+     다만 눈이 불편한 분이 글씨를 키울 수 없게 되니 권하지는 않아요.
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+-->
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="light only">
 <title>모바일 청첩장</title>
@@ -50,6 +54,18 @@ body{
 input,textarea,select{user-select:auto;-webkit-user-select:auto}
 #app{font-family:var(--f-ko);max-width:430px;margin:0 auto;background:var(--cream);min-height:100dvh;overflow-x:hidden;box-shadow:0 0 40px rgba(0,0,0,.12)}
 img{display:block;max-width:100%}
+/* ── 사진 확대 방지 ──────────────────────────────────
+   · touch-action:pan-y  → 사진 위에서 두 손가락 확대·더블탭 확대가 안 돼요
+   · touch-callout:none  → 길게 눌러도 '이미지 저장' 메뉴가 안 떠요
+   · user-drag:none      → PC에서 사진을 끌어다 빼낼 수 없어요
+   페이지 전체 확대까지 막고 싶으면 맨 위 viewport 줄을 참고하세요.   */
+img{
+  touch-action:pan-y;
+  -webkit-touch-callout:none;
+  -webkit-user-drag:none;user-drag:none;
+  pointer-events:auto;
+}
+.lb img{touch-action:none}
 .serif-en{font-family:var(--f-en)}
 .sans{font-family:'Noto Sans KR',sans-serif}
 section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
@@ -660,6 +676,28 @@ for(let i=0;i<16;i++){
   p.style.animationDelay=(Math.random()*8)+'s';
   pw.appendChild(p);
 }
+/* ── 사진 확대·길게 눌러 저장 막기 ── */
+document.addEventListener('contextmenu',e=>{
+  if(e.target.tagName==='IMG')e.preventDefault();
+});
+document.addEventListener('dragstart',e=>{
+  if(e.target.tagName==='IMG')e.preventDefault();
+});
+/* iOS 사파리의 두 손가락 확대 제스처 */
+['gesturestart','gesturechange','gestureend'].forEach(ev=>{
+  document.addEventListener(ev,e=>{
+    if(e.target&&e.target.tagName==='IMG')e.preventDefault();
+  },{passive:false});
+});
+/* 사진 위 더블탭 확대 */
+let _lastTap=0;
+document.addEventListener('touchend',e=>{
+  if(!e.target||e.target.tagName!=='IMG')return;
+  const now=Date.now();
+  if(now-_lastTap<320)e.preventDefault();
+  _lastTap=now;
+},{passive:false});
+
 /* 패럴랙스 */
 const hi=$('heroImg');
 if(hi)addEventListener('scroll',()=>{const sy=scrollY;if(sy<innerHeight)hi.style.transform=`translateY(${sy*0.25}px)`;},{passive:true});
