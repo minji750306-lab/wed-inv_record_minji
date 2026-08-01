@@ -56,6 +56,7 @@ header h1 span{color:var(--sage)}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}}
 .acc-rows{display:flex;flex-direction:column;gap:10px}
 .acc-row{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px}
+.acc-row .kakao-in{grid-column:1/-1;font-size:12.5px}
 .acc-row input{border:1px solid var(--line);border-radius:9px;padding:11px 12px;font-size:13.5px;font-family:inherit;background:var(--cream)}
 .addbtn{margin-top:10px;border:1px dashed var(--sage);background:none;color:var(--sage);border-radius:9px;padding:10px;font-size:13px;cursor:pointer;font-family:inherit;width:100%}
 /* 사진 업로드 */
@@ -271,7 +272,14 @@ header h1 span{color:var(--sage)}
 
   <div class="card">
     <h2><em>6.</em>마음 전하실 곳 <small>· 비워둔 항목은 표시되지 않아요.</small></h2>
-    <div class="f"><label>신랑측 계좌 <small>예금주 / 은행 / 계좌번호</small></label>
+    <div class="f">
+      <label>표시 순서</label>
+      <select id="accOrder">
+        <option value="groom">신랑측 먼저</option>
+        <option value="bride">신부측 먼저</option>
+      </select>
+    </div>
+    <div class="f"><label>신랑측 계좌 <small>예금주 / 은행 / 계좌번호 / 카카오페이 송금 링크(선택)</small></label>
       <div class="acc-rows" id="accG"></div>
       <button class="addbtn" data-side="accG">+ 신랑측 계좌 추가</button>
     </div>
@@ -424,7 +432,7 @@ const CREDIT_LINK_LABEL = '🔗 네이버 블로그 바로가기';  /* ← 링�
 }
 const IDS=['groom','bride','groomEn','brideEn','groomP','brideP','groomOrder','brideOrder',
 'date','time','venue','hall','addr','lead','inviteTitle','galTitle','msg','footMsg',
-'subway','bus','car','charter','slug','editKey','deleteDate','inviteCode','heroStyle',
+'subway','bus','car','charter','slug','editKey','accOrder','deleteDate','inviteCode','heroStyle',
 'rsvpMode','rsvpTitle','rsvpDesc','snapOn','snapTitle','snapDesc','snapOpenDate','ogDesc'];
 const $=id=>document.getElementById(id);
 const toastEl=$('toast');let tt;
@@ -692,15 +700,16 @@ function addAccRow(side,v){
   const r=document.createElement('div');r.className='acc-row';
   r.innerHTML=`<input placeholder="예금주" value="${v&&v.who?v.who:''}">
                <input placeholder="은행" value="${v&&v.bank?v.bank:''}">
-               <input placeholder="계좌번호" value="${v&&v.num?v.num:''}">`;
+               <input placeholder="계좌번호" value="${v&&v.num?v.num:''}">
+               <input class="kakao-in" placeholder="카카오페이 송금 링크 (선택) · https://qr.kakaopay.com/..." value="${v&&v.kakao?v.kakao:''}">`;
   r.querySelectorAll('input').forEach(i=>i.addEventListener('input',save));
   w.appendChild(r);
 }
 document.querySelectorAll('.addbtn').forEach(b=>b.addEventListener('click',()=>{addAccRow(b.dataset.side);save();}));
 function readAcc(side){
   return [...$(side).querySelectorAll('.acc-row')].map(r=>{
-    const [who,bank,num]=[...r.querySelectorAll('input')].map(i=>i.value.trim());
-    return {who,bank,num};
+    const [who,bank,num,kakao]=[...r.querySelectorAll('input')].map(i=>i.value.trim());
+    return {who,bank,num,kakao};
   }).filter(a=>a.who||a.bank||a.num);
 }
 
