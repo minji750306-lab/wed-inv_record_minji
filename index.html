@@ -110,14 +110,9 @@ header h1 span{color:var(--sage)}
 .preset button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
 .preset .dot{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.09)}
 /* 표지 선택 카드 + 미리보기 */
-/* 테마 칩 — 한 줄로 작게 */
-.themes{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
-.themes .th{border:1px solid var(--line);border-radius:99px;background:#fff;cursor:pointer;padding:7px 14px;font-family:inherit;font-size:12.5px;color:var(--ink);line-height:1.4}
-.themes .th b{font-weight:500}
-.themes .th span{display:none}
-.themes .th.on{border-color:var(--sage);background:#FBF7F8;color:var(--sage)}
 /* 표지 미리보기 — 한 화면에 다 보이도록 작게 */
-.hgroup{font-size:11.5px;color:#9a9590;margin:2px 0 7px;letter-spacing:.02em}
+.hgroup{font-size:11.5px;color:#8a8f83;margin:2px 0 7px;font-weight:500}
+.hgroup em{font-style:normal;color:#b8b2ae;font-weight:400;margin-left:5px;font-size:10.5px}
 .hgroup:not(:first-child){margin-top:14px}
 .hstyles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:4px}
 @media(max-width:420px){.hstyles{grid-template-columns:repeat(4,1fr)}}
@@ -139,8 +134,9 @@ header h1 span{color:var(--sage)}
 .lblrow{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .galhint{display:block;font-size:11.5px;color:#9a9590;line-height:1.7;margin-bottom:9px}
 .f.off .thumbs,.f.off .galhint{display:none}
-.hprev{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px;margin-top:4px}
-.hprev .hp-label{font-size:11.5px;color:#9a8f92;margin-bottom:8px}
+/* 표지를 고르는 동안 미리보기가 위에 붙어 따라와요 */
+.hprev{position:sticky;top:8px;z-index:6;border:1px solid var(--line);border-radius:12px;background:var(--cream);padding:12px;margin-bottom:14px}
+.hprev .hp-label{font-size:11px;color:#9a8f92;margin-top:8px;text-align:center}
 .hprev .hp-stage{max-width:210px;margin:0 auto;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
 /* 주소 */
 .slugrow{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:9px;background:var(--cream);overflow:hidden}
@@ -342,10 +338,14 @@ header h1 span{color:var(--sage)}
       <div class="thumbs" id="galThumbs"><button type="button" class="addtile" id="galAdd">＋</button></div>
     </div>
     <div class="f">
-      <label>테마 <small>· 글꼴 분위기가 통째로 바뀌어요</small></label>
-      <div class="themes" id="themeTabs"></div>
+      <label>표지 디자인 <small>· 고르면 글꼴 분위기까지 함께 바뀌어요. 아래 미리보기로 바로 확인하세요</small></label>
+      <div class="hprev">
+        <div style="width:210px;height:340px;margin:0 auto;overflow:hidden;border-radius:10px;border:1px solid var(--line);position:relative;background:#fff">
+          <iframe id="liveFrame" src="about:blank" scrolling="no" style="width:430px;height:697px;border:0;transform:scale(0.4884);transform-origin:0 0;pointer-events:none;position:absolute;left:0;top:0"></iframe>
+        </div>
+        <div class="hp-label">실시간 미리보기 · 표지 위주로 보여져요</div>
+      </div>
       <input id="theme" type="hidden" value="classic">
-      <label style="margin-top:16px">표지 디자인</label>
       <div id="heroStyles"></div>
       <input id="heroStyle" type="hidden" value="classic">
     </div>
@@ -369,12 +369,6 @@ header h1 span{color:var(--sage)}
           <input type="color" id="cSage" value="#A8B096"><input type="text" id="cSageT" value="#A8B096">
           <label>보조 컬러<small>꽃잎 · 옅은 글자</small></label>
         </div>
-      </div>
-    </div>
-    <div class="hprev">
-      <div class="hp-label">실시간 미리보기 · 표지 위주로 보여지며, 전체 화면은 모두 입력 후 미리보기로 볼 수 있어요.</div>
-      <div style="width:260px;height:420px;margin:0 auto;overflow:hidden;border-radius:10px;border:1px solid var(--line);position:relative">
-        <iframe id="liveFrame" src="about:blank" scrolling="no" style="width:450px;height:720px;border:0;transform:scale(0.6047);transform-origin:0 0;pointer-events:none;position:absolute;left:-6px;top:0"></iframe>
       </div>
     </div>
   </div>
@@ -710,30 +704,14 @@ const HERO_STYLES=[
   ['petalcard','카드형',`<div style="position:absolute;inset:0;background:linear-gradient(170deg,#D8CFD1,#FAF4F2)"></div><div style="position:absolute;inset:9% 12%;background:#fff;border-radius:2px"></div><div style="position:absolute;top:15%;left:0;right:0;text-align:center;color:#C48A94;font-family:'Great Vibes',cursive;font-size:11px">Just Married</div><div class="ph" style="inset:28% 20% 26% 20%"></div><div class="ln" style="bottom:15%;background:#C9B0B6"></div>`,'romantic']
 ];
 
-const tw2=$('themeTabs');
-THEMES.forEach(([v,label,desc])=>{
-  const b=document.createElement('button');
-  b.type='button';b.className='th';b.dataset.v=v;
-  b.innerHTML=`<b>${label}</b><span>${desc}</span>`;
-  b.addEventListener('click',()=>{
-    $('theme').value=v;
-    /* 테마를 바꾸면 그 테마의 첫 번째 표지를 골라줘요 */
-    const first=HERO_STYLES.find(h=>h[3]===v);
-    if(first && HERO_STYLES.find(h=>h[0]===$('heroStyle').value)?.[3]!==v)$('heroStyle').value=first[0];
-    markTheme();save();
-  });
-  tw2.appendChild(b);
-});
-
 const hw=$('heroStyles');
 /* 표지는 테마 구분 없이 전부 보여주고, 고르면 그 테마로 자동 전환돼요 */
 function markTheme(){
-  const t=$('theme').value||'classic';
-  tw2.querySelectorAll('.th').forEach(x=>x.classList.toggle('on',x.dataset.v===t));
   hw.innerHTML='';
-  THEMES.forEach(([tv,tlabel])=>{
+  THEMES.forEach(([tv,tlabel,tdesc])=>{
     const h=document.createElement('div');
-    h.className='hgroup';h.textContent=tlabel;
+    h.className='hgroup';
+    h.innerHTML=`${tlabel}<em>${tdesc}</em>`;
     hw.appendChild(h);
     const row=document.createElement('div');
     row.className='hstyles';
@@ -743,8 +721,9 @@ function markTheme(){
       b.innerHTML=`<div class="mini">${mock}</div><div class="mname">${label}</div>`;
       b.addEventListener('click',()=>{
         $('heroStyle').value=v;
-        $('theme').value=tv;          /* 표지를 고르면 테마도 따라가요 */
+        $('theme').value=tv;          /* 표지를 고르면 글꼴 테마도 함께 바뀌어요 */
         markTheme();save();
+        renderHeroPrev(true);         /* 기다리지 않고 바로 미리보기 갱신 */
       });
       row.appendChild(b);
     });
@@ -757,7 +736,7 @@ function markHeroStyle(){
   renderHeroPrev();
 }
 let _lvTimer=null;
-function renderHeroPrev(){
+function renderHeroPrev(now){
   clearTimeout(_lvTimer);
   _lvTimer=setTimeout(()=>{
     try{
@@ -765,7 +744,7 @@ function renderHeroPrev(){
       const f=$('liveFrame');
       f.src='/i.html?preview=1&t='+Date.now();
     }catch(e){}
-  },900);
+  },now?0:900);
 }
 /* ── 컬러 ── */
 const COLOR_PAIRS=[['cInk','cInkT'],['cCream','cCreamT'],['cGold','cGoldT'],['cSage','cSageT']];
@@ -800,7 +779,7 @@ PRESETS.forEach(([name,ink,cream,gold,sage])=>{
     [['cInk',ink],['cCream',cream],['cGold',gold],['cSage',sage]].forEach(([id,v])=>{
       $(id).value=v;$(id+'T').value=v.toUpperCase();
     });
-    save();toast(`'${name}' 컬러를 적용했어요`);
+    save();renderHeroPrev(true);toast(`'${name}' 컬러를 적용했어요`);
   });
   pw.appendChild(b);
 });
