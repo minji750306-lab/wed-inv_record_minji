@@ -15,7 +15,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🤍</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&family=Noto+Serif+KR:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&family=Noto+Serif+KR:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Pen+Script&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#2E3A2C;        /* 딥 올리브 */
@@ -27,24 +27,34 @@
   --line:#DDDCCF;
   --white:#FDFCF8;
   --muted:#7C8476;
+  /* 글꼴 — 테마에 따라 아래에서 덮어써져요 */
+  --f-ko:'Noto Serif KR',serif;      /* 한글 본문 */
+  --f-en:'Cormorant Garamond',serif; /* 영문 장식 */
+  --f-script:'Great Vibes',cursive;  /* 필기체 */
 }
+/* ── 테마: 글꼴 세트 ── */
+#app.theme-classic{--f-ko:'Nanum Myeongjo',serif;--f-en:'Cormorant Garamond',serif;--f-script:'Great Vibes',cursive}
+#app.theme-modern{--f-ko:'Noto Sans KR',sans-serif;--f-en:'Josefin Sans',sans-serif;--f-script:'Josefin Sans',sans-serif}
+#app.theme-romantic{--f-ko:'Nanum Myeongjo',serif;--f-en:'Playfair Display',serif;--f-script:'Nanum Pen Script',cursive}
+/* 로맨틱 테마의 손글씨는 획이 얇아 조금 키워요 */
+#app.theme-romantic .hero .amp,#app.theme-romantic .amp2,#app.theme-romantic .amp3{font-size:1.35em;position:relative;top:.06em}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
 body{
-  font-family:'Noto Serif KR',serif;
+  font-family:var(--f-ko);
   background:#E9E7DD;
   color:var(--ink);
   -webkit-font-smoothing:antialiased;
   user-select:none;-webkit-user-select:none;
 }
 input,textarea,select{user-select:auto;-webkit-user-select:auto}
-#app{max-width:430px;margin:0 auto;background:var(--cream);min-height:100dvh;overflow-x:hidden;box-shadow:0 0 40px rgba(0,0,0,.12)}
+#app{font-family:var(--f-ko);max-width:430px;margin:0 auto;background:var(--cream);min-height:100dvh;overflow-x:hidden;box-shadow:0 0 40px rgba(0,0,0,.12)}
 img{display:block;max-width:100%}
-.serif-en{font-family:'Cormorant Garamond',serif}
+.serif-en{font-family:var(--f-en)}
 .sans{font-family:'Noto Sans KR',sans-serif}
 section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
 .eyebrow{
-  font-family:'Cormorant Garamond',serif;
+  font-family:var(--f-en);
   letter-spacing:.35em;font-size:13px;color:var(--gold);
   text-align:center;text-transform:uppercase;margin-bottom:14px;
 }
@@ -69,9 +79,9 @@ section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
   text-shadow:0 1px 12px rgba(0,0,0,.5),0 0 2px rgba(0,0,0,.35);
 }
 .hero .lead{font-size:14px;line-height:2.1;opacity:.92;margin-bottom:18px;font-weight:300}
-.hero .names{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:400;letter-spacing:.06em;line-height:1.2}
-.hero .amp{font-family:'Great Vibes',cursive;font-size:30px;color:var(--gold);margin:0 10px}
-.hero .date-en{font-family:'Cormorant Garamond',serif;letter-spacing:.4em;font-size:14px;margin-top:14px;opacity:.9}
+.hero .names{font-family:var(--f-en);font-size:44px;font-weight:400;letter-spacing:.06em;line-height:1.2}
+.hero .amp{font-family:var(--f-script);font-size:30px;color:var(--gold);margin:0 10px}
+.hero .date-en{font-family:var(--f-en);letter-spacing:.4em;font-size:14px;margin-top:14px;opacity:.9}
 .hero .venue-box{
   display:inline-block;margin-top:22px;padding:14px 26px;position:relative;font-size:13px;line-height:1.9;font-weight:300;
 }
@@ -81,19 +91,97 @@ section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
 /* ── HERO 변형: 아치형 ── */
 .hero.style-arch{height:auto;min-height:0;background:var(--cream);padding:64px 28px 56px;text-align:center}
 .hero.style-arch .archwrap{max-width:300px;margin:0 auto}
-.hero.style-arch .eyebrow2{font-family:'Cormorant Garamond',serif;letter-spacing:.32em;font-size:11px;color:var(--gold);text-transform:uppercase;margin-bottom:22px}
+.hero.style-arch .eyebrow2{font-family:var(--f-en);letter-spacing:.32em;font-size:11px;color:var(--gold);text-transform:uppercase;margin-bottom:22px}
 .hero.style-arch .archimg{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:160px 160px 12px 12px;display:block}
-.hero.style-arch .names2{font-family:'Noto Serif KR',serif;font-size:23px;font-weight:500;margin-top:28px;letter-spacing:.1em;color:var(--ink)}
-.hero.style-arch .names2 .amp2{color:var(--gold);font-family:'Great Vibes',cursive;font-size:22px;margin:0 8px}
+.hero.style-arch .names2{font-family:var(--f-ko);font-size:23px;font-weight:500;margin-top:28px;letter-spacing:.1em;color:var(--ink)}
+.hero.style-arch .names2 .amp2{color:var(--gold);font-family:var(--f-script);font-size:22px;margin:0 8px}
 .hero.style-arch .info2{margin-top:14px;font-size:13px;line-height:2;color:var(--muted);font-weight:300}
 /* ── HERO 변형: 액자형 ── */
 .hero.style-frame{height:auto;min-height:0;background:var(--ink);padding:56px 28px;text-align:center}
 .hero.style-frame .framecard{background:var(--white);max-width:310px;margin:0 auto;padding:22px 22px 30px;border-radius:6px;box-shadow:0 16px 44px rgba(0,0,0,.28)}
-.hero.style-frame .names3{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:500;letter-spacing:.14em;color:var(--ink);padding:10px 0 18px}
-.hero.style-frame .names3 .amp3{color:var(--gold);font-family:'Great Vibes',cursive;font-size:20px;margin:0 7px}
+.hero.style-frame .names3{font-family:var(--f-ko);font-size:17px;font-weight:500;letter-spacing:.14em;color:var(--ink);padding:10px 0 18px}
+.hero.style-frame .names3 .amp3{color:var(--gold);font-family:var(--f-script);font-size:20px;margin:0 7px}
 .hero.style-frame .frameimg{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
 .hero.style-frame .info3{margin-top:20px;font-size:12.5px;line-height:2;color:var(--muted);font-weight:300}
-.hero.style-frame .datebig{font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:.28em;color:var(--ink);margin-top:16px}
+.hero.style-frame .datebig{font-family:var(--f-en);font-size:26px;letter-spacing:.28em;color:var(--ink);margin-top:16px}
+/* ══════════ 표지 변형: 클래식 계열 ══════════ */
+/* 띠형 — 사진 아래 크림 띠에 이름·날짜 */
+.hero.style-band{height:auto;min-height:0;background:var(--cream);padding:0;text-align:center}
+.hero.style-band .bandimg{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:var(--sage-lt)}
+.hero.style-band .bandbox{padding:34px 26px 46px}
+.hero.style-band .eyebrowB{font-family:var(--f-en);letter-spacing:.34em;font-size:10.5px;color:var(--gold);text-transform:uppercase}
+.hero.style-band .namesB{font-family:var(--f-ko);font-size:24px;font-weight:500;letter-spacing:.1em;margin-top:16px;color:var(--ink)}
+.hero.style-band .namesB .ampB{font-family:var(--f-script);color:var(--gold);font-size:21px;margin:0 9px}
+.hero.style-band .ruleB{width:34px;height:1px;background:var(--gold);margin:20px auto}
+.hero.style-band .infoB{font-size:13px;line-height:2;color:var(--muted);font-weight:300}
+
+/* 라인형 — 사진 위 얇은 사각 라인 프레임 */
+.hero.style-line{position:relative;height:100dvh;min-height:560px;overflow:hidden;padding:0}
+.hero.style-line .lineimg{width:100%;height:100%;object-fit:cover}
+.hero.style-line .lineveil{position:absolute;inset:0;background:rgba(26,20,22,.34)}
+.hero.style-line .linebox{
+  position:absolute;inset:26px;border:1px solid rgba(253,252,248,.55);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;color:var(--white);padding:24px;
+  text-shadow:0 1px 10px rgba(0,0,0,.4);
+}
+.hero.style-line .eyebrowL{font-family:var(--f-en);letter-spacing:.36em;font-size:10.5px;text-transform:uppercase;opacity:.9}
+.hero.style-line .namesL{font-family:var(--f-en);font-size:38px;letter-spacing:.14em;margin:22px 0;line-height:1.3;text-transform:uppercase}
+.hero.style-line .dateL{font-family:var(--f-en);letter-spacing:.3em;font-size:13px;margin-bottom:10px}
+.hero.style-line .infoL{font-size:12.5px;line-height:1.95;font-weight:300;opacity:.92}
+
+/* ══════════ 표지 변형: 모던 계열 ══════════ */
+/* 분할형 — 위 사진 / 아래 큰 날짜 */
+.hero.style-split{height:auto;min-height:0;background:var(--cream);padding:0;text-align:left}
+.hero.style-split .splitimg{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--sage-lt)}
+.hero.style-split .splitbox{padding:32px 28px 46px}
+.hero.style-split .bigdate{font-family:var(--f-en);font-size:52px;line-height:1;letter-spacing:.02em;color:var(--ink);font-weight:400}
+.hero.style-split .bigdate small{display:block;font-size:12px;letter-spacing:.3em;color:var(--gold);margin-top:12px;text-transform:uppercase}
+.hero.style-split .namesS{font-family:var(--f-ko);font-size:19px;font-weight:500;letter-spacing:.08em;margin-top:26px;color:var(--ink)}
+.hero.style-split .namesS .ampS{color:var(--gold);margin:0 8px}
+.hero.style-split .infoS{font-size:12.5px;line-height:2;color:var(--muted);margin-top:12px;font-weight:300}
+
+/* 미니멀형 — 여백 많은 타이포 중심 */
+.hero.style-minimal{height:auto;min-height:0;background:var(--white);padding:74px 30px 62px;text-align:center}
+.hero.style-minimal .miniwrap{max-width:290px;margin:0 auto}
+.hero.style-minimal .namesM{font-family:var(--f-en);font-size:30px;letter-spacing:.2em;text-transform:uppercase;line-height:1.5;color:var(--ink)}
+.hero.style-minimal .ruleM{width:1px;height:40px;background:var(--line);margin:26px auto}
+.hero.style-minimal .miniimg{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--sage-lt)}
+.hero.style-minimal .dateM{font-family:var(--f-en);letter-spacing:.34em;font-size:12.5px;color:var(--gold);margin-top:28px}
+.hero.style-minimal .infoM{font-size:12.5px;line-height:2;color:var(--muted);margin-top:12px;font-weight:300}
+
+/* ══════════ 표지 변형: 로맨틱 계열 ══════════ */
+/* 필기체형 — 사진 위 큰 손글씨 이름 */
+.hero.style-script{position:relative;height:100dvh;min-height:560px;overflow:hidden;padding:0}
+.hero.style-script .scrimg{width:100%;height:100%;object-fit:cover}
+.hero.style-script .scrveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,20,24,.30) 0%,rgba(30,20,24,.05) 45%,rgba(30,20,24,.62) 100%)}
+.hero.style-script .scrbox{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;color:var(--white);padding:0 28px;
+  text-shadow:0 2px 16px rgba(0,0,0,.45);
+}
+.hero.style-script .namesC{font-family:var(--f-script);font-size:56px;line-height:1.25;font-weight:400}
+.hero.style-script .namesC .ampC{display:block;font-size:.5em;opacity:.85;margin:2px 0}
+.hero.style-script .dateC{font-family:var(--f-en);letter-spacing:.3em;font-size:13px;margin-top:26px}
+.hero.style-script .infoC{font-size:12.5px;line-height:2;font-weight:300;margin-top:10px;opacity:.94}
+
+/* 부드러운형 — 크림 배경 + 타원 사진 */
+.hero.style-soft{height:auto;min-height:0;background:var(--cream);padding:60px 28px 54px;text-align:center}
+.hero.style-soft .softwrap{max-width:300px;margin:0 auto}
+.hero.style-soft .greet{font-family:var(--f-script);font-size:34px;color:var(--gold);line-height:1.3;margin-bottom:22px}
+.hero.style-soft .softimg{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:50%/44%;display:block;background:var(--sage-lt)}
+.hero.style-soft .namesF{font-family:var(--f-ko);font-size:22px;font-weight:500;letter-spacing:.1em;margin-top:28px;color:var(--ink)}
+.hero.style-soft .namesF .ampF{font-family:var(--f-script);color:var(--gold);font-size:1.1em;margin:0 9px}
+.hero.style-soft .infoF{font-size:13px;line-height:2;color:var(--muted);margin-top:14px;font-weight:300}
+
+/* 카드형 — 흰 카드 + 손글씨 */
+.hero.style-petalcard{height:auto;min-height:0;background:linear-gradient(170deg,var(--sage-lt),var(--cream));padding:54px 26px;text-align:center;position:relative}
+.hero.style-petalcard .pcard{background:var(--white);max-width:308px;margin:0 auto;padding:26px 24px 32px;border-radius:4px;box-shadow:0 18px 46px rgba(0,0,0,.16);position:relative;z-index:2}
+.hero.style-petalcard .greetP{font-family:var(--f-script);font-size:30px;color:var(--gold);margin-bottom:18px;line-height:1.25}
+.hero.style-petalcard .pimg{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--sage-lt)}
+.hero.style-petalcard .namesP{font-family:var(--f-ko);font-size:19px;font-weight:500;letter-spacing:.12em;margin-top:22px;color:var(--ink)}
+.hero.style-petalcard .namesP .ampP{font-family:var(--f-script);color:var(--gold);font-size:1.15em;margin:0 8px}
+.hero.style-petalcard .infoP{font-size:12.5px;line-height:2;color:var(--muted);margin-top:12px;font-weight:300}
 /* 꽃잎 */
 .petal{position:absolute;top:-4vh;border-radius:60% 40% 55% 45%/55% 60% 40% 45%;background:var(--sage-lt);opacity:.7;animation:fall linear infinite;pointer-events:none}
 @keyframes fall{
@@ -111,7 +199,7 @@ section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
 
 /* ── 캘린더 ── */
 .cal-wrap{max-width:320px;margin:0 auto;text-align:center}
-.cal-month{font-family:'Noto Serif KR',serif;font-size:27px;font-weight:500;letter-spacing:.12em;margin-bottom:6px}
+.cal-month{font-family:var(--f-ko);font-size:27px;font-weight:500;letter-spacing:.12em;margin-bottom:6px}
 .cal-sub{font-size:13px;color:var(--muted);margin-bottom:26px;font-family:'Noto Sans KR',sans-serif}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px 0;font-family:'Noto Sans KR',sans-serif;font-size:13.5px}
 .cal .h{color:var(--muted);font-size:11px;padding-bottom:8px;letter-spacing:.1em}
@@ -180,7 +268,7 @@ section{padding:72px 24px;word-break:keep-all;overflow-wrap:break-word}
 
 /* ── 푸터 ── */
 footer{background:var(--ink);color:var(--sage-lt);text-align:center;padding:60px 24px calc(56px + env(safe-area-inset-bottom));border-top:1px solid rgba(253,252,248,.12)}
-footer .end{font-family:'Cormorant Garamond',serif;letter-spacing:.3em;font-size:13px;margin-bottom:22px}
+footer .end{font-family:var(--f-en);letter-spacing:.3em;font-size:13px;margin-bottom:22px}
 footer .share{
   border:1px solid rgba(253,252,248,.35);background:none;color:var(--cream);
   padding:12px 28px;border-radius:999px;font-size:13.5px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;white-space:nowrap;
@@ -205,7 +293,7 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
 .rsvp-modal.open{display:flex}
 .rsvp-card{background:var(--cream);border-radius:18px;max-width:360px;width:100%;padding:34px 26px 26px;position:relative;max-height:88dvh;overflow-y:auto;text-align:center}
 .rsvp-x{position:absolute;top:14px;right:16px;background:none;border:0;font-size:20px;line-height:1;color:var(--muted);cursor:pointer}
-#rsvpBlock h3{font-size:18px;font-weight:500;margin:4px 0 12px;color:var(--ink);font-family:'Noto Serif KR',serif}
+#rsvpBlock h3{font-size:18px;font-weight:500;margin:4px 0 12px;color:var(--ink);font-family:var(--f-ko)}
 #rsvpBlock .rsvp-desc{font-size:12px;line-height:1.8;color:var(--ink-soft);font-family:'Noto Sans KR',sans-serif;font-weight:300;margin-bottom:22px;white-space:pre-line}
 .rsvp-seg{display:flex;gap:8px;margin-bottom:10px}
 .rsvp-seg button{flex:1;padding:12px 0;border-radius:9px;border:1px solid var(--line);background:var(--white);color:var(--ink);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer}
@@ -254,7 +342,7 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
   </section>
 
   <!-- 초대 -->
-  <section class="invite">
+  <section class="invite" id="inviteSec">
     <div class="eyebrow fu">Invitation</div>
     <h2 class="sec-title fu" style="color:var(--white)" id="inviteTitle">소중한 분들을 초대합니다</h2>
     <div class="orna fu"><span>❦</span></div>
@@ -263,7 +351,7 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
   </section>
 
   <!-- 캘린더 -->
-  <section>
+  <section id="calSec">
     <div class="eyebrow fu">Save the date</div>
     <div class="cal-wrap fu">
       <div class="cal-month" id="calMonth"></div>
@@ -274,7 +362,7 @@ footer .credit{margin-top:10px;font-size:10.5px;opacity:.4;font-family:'Noto San
   </section>
 
   <!-- 오시는 길 -->
-  <section class="loc">
+  <section class="loc" id="locSec">
     <div class="eyebrow fu">Location</div>
     <h2 class="sec-title fu">오시는 길</h2>
     <p class="vname fu" id="locName"></p>
@@ -454,26 +542,99 @@ const [hh,mm]=(D.time||'12:00').split(':').map(Number);
 const ampm=hh<12?'오전':(hh<17?'낮':'저녁');
 const h12=hh%12===0?12:hh%12;
 
+/* ── 표기 순서: nameOrder가 'bride'면 신부를 먼저 ── */
+const BR = D.nameOrder==='bride';
+const N1  = BR ? D.bride : D.groom;              /* 먼저 나오는 사람 */
+const N2  = BR ? D.groom : D.bride;              /* 나중에 나오는 사람 */
+const N1En= BR ? (D.brideEn||D.bride) : (D.groomEn||D.groom);
+const N2En= BR ? (D.groomEn||D.groom) : (D.brideEn||D.bride);
+
+/* ── 섹션 사용/미사용 (에디터에서 끈 항목은 아예 안 그려요) ── */
+const SEC = D.secOn || {};
+const secOff = k => SEC[k]===false;
+
 /* 문서 제목/설명 */
-document.title=`${D.groom} ♥ ${D.bride}`;
+document.title=`${N1} ♥ ${N2}`;
 
 /* HERO */
 const heroSec=document.querySelector('.hero');
 const heroStyle=D.heroStyle||'classic';
 const dateLine=`${y}년 ${mo}월 ${dt}일 ${dayName}요일 ${ampm} ${h12}시${mm?` ${mm}분`:''}`;
 const dateEnLine=`${y} · ${String(mo).padStart(2,'0')} · ${String(dt).padStart(2,'0')}`;
-if(heroStyle==='arch'){
+const IMGERR="this.onerror=null;this.style.background='var(--sage-lt)';this.removeAttribute('src')";
+const venueLine=`${D.venue||''}${D.hall?' · '+D.hall:''}`;
+const dNum=`${y} . ${String(mo).padStart(2,'0')} . ${String(dt).padStart(2,'0')}`;
+
+/* 테마 글꼴 적용 (classic / modern / romantic) */
+document.getElementById('app').classList.add('theme-'+(D.theme||'classic'));
+
+const HERO_HTML={
+  band:`<div class="fu">
+    <img class="bandimg" src="${D.hero||''}" alt="" onerror="${IMGERR}">
+    <div class="bandbox">
+      <div class="eyebrowB">We are getting married</div>
+      <div class="namesB">${N1}<span class="ampB">&amp;</span>${N2}</div>
+      <div class="ruleB"></div>
+      <div class="infoB">${dateLine}<br>${venueLine}</div>
+    </div></div>`,
+  line:`<img class="lineimg" src="${D.hero||''}" alt="" onerror="${IMGERR}">
+    <div class="lineveil"></div>
+    <div class="linebox fu">
+      <div class="eyebrowL">Save the date</div>
+      <div class="namesL">${N1En}<br>&amp;<br>${N2En}</div>
+      <div class="dateL">${dNum}</div>
+      <div class="infoL">${dateLine}<br>${venueLine}</div>
+    </div>`,
+  split:`<div class="fu">
+    <img class="splitimg" src="${D.hero||''}" alt="" onerror="${IMGERR}">
+    <div class="splitbox">
+      <div class="bigdate">${String(mo).padStart(2,'0')}.${String(dt).padStart(2,'0')}<small>${y} · ${dayName}요일</small></div>
+      <div class="namesS">${N1}<span class="ampS">&amp;</span>${N2}</div>
+      <div class="infoS">${dateLine}<br>${venueLine}</div>
+    </div></div>`,
+  minimal:`<div class="miniwrap fu">
+    <div class="namesM">${N1En}<br>&amp;<br>${N2En}</div>
+    <div class="ruleM"></div>
+    <img class="miniimg" src="${D.hero||''}" alt="" onerror="${IMGERR}">
+    <div class="dateM">${dNum}</div>
+    <div class="infoM">${dateLine}<br>${venueLine}</div>
+  </div>`,
+  script:`<img class="scrimg" src="${D.hero||''}" alt="" onerror="${IMGERR}">
+    <div class="scrveil"></div>
+    <div class="scrbox fu">
+      <div class="namesC">${N1En}<span class="ampC">&amp;</span>${N2En}</div>
+      <div class="dateC">${dNum}</div>
+      <div class="infoC">${dateLine}<br>${venueLine}</div>
+    </div>`,
+  soft:`<div class="softwrap fu">
+    <div class="greet">Our Wedding Day</div>
+    <img class="softimg" src="${D.hero||''}" alt="" onerror="${IMGERR}">
+    <div class="namesF">${N1}<span class="ampF">&amp;</span>${N2}</div>
+    <div class="infoF">${dateLine}<br>${venueLine}</div>
+  </div>`,
+  petalcard:`<div class="pcard fu">
+    <div class="greetP">Just Married</div>
+    <img class="pimg" src="${D.hero||''}" alt="" onerror="${IMGERR}">
+    <div class="namesP">${N1}<span class="ampP">&amp;</span>${N2}</div>
+    <div class="infoP">${dateLine}<br>${venueLine}</div>
+  </div>`
+};
+
+if(HERO_HTML[heroStyle]){
+  heroSec.className='hero style-'+heroStyle;
+  heroSec.innerHTML=HERO_HTML[heroStyle];
+}else if(heroStyle==='arch'){
   heroSec.className='hero style-arch';
   heroSec.innerHTML=`<div class="archwrap fu">
     <div class="eyebrow2">We are getting married</div>
     <img class="archimg" src="${D.hero||''}" alt="" onerror="this.onerror=null;this.style.background='var(--sage-lt)';this.removeAttribute('src')">
-    <div class="names2">${D.groom}<span class="amp2">and</span>${D.bride}</div>
+    <div class="names2">${N1}<span class="amp2">and</span>${N2}</div>
     <div class="info2">${dateLine}<br>${D.venue}${D.hall?' · '+D.hall:''}</div>
   </div>`;
 }else if(heroStyle==='frame'){
   heroSec.className='hero style-frame';
   heroSec.innerHTML=`<div class="framecard fu">
-    <div class="names3">${D.groom}<span class="amp3">&amp;</span>${D.bride}</div>
+    <div class="names3">${N1}<span class="amp3">&amp;</span>${N2}</div>
     <img class="frameimg" src="${D.hero||''}" alt="" onerror="this.onerror=null;this.style.background='var(--sage-lt)';this.removeAttribute('src')">
     <div class="datebig">${y} · ${String(mo).padStart(2,'0')} · ${String(dt).padStart(2,'0')}</div>
     <div class="info3">${dateLine}<br>${D.venue}${D.hall?' · '+D.hall:''}</div>
@@ -482,7 +643,7 @@ if(heroStyle==='arch'){
   $('heroImg').src=D.hero||'';
   $('heroImg').onerror=function(){this.onerror=null;this.style.display='none';this.parentElement.style.background='linear-gradient(160deg,#465243,#2E3A2C)';};
   $('lead').textContent=D.lead||'';
-  $('names').innerHTML=`${D.groomEn||D.groom}<span class="amp">&amp;</span>${D.brideEn||D.bride}`;
+  $('names').innerHTML=`${N1En}<span class="amp">&amp;</span>${N2En}`;
   $('dateEn').textContent=dateEnLine;
   $('venueBox').innerHTML=`${dateLine}<br>${D.venue}${D.hall?' · '+D.hall:''}`;
 }
@@ -506,10 +667,31 @@ if(hi)addEventListener('scroll',()=>{const sy=scrollY;if(sy<innerHeight)hi.style
 /* 초대 */
 if(D.inviteTitle)$('inviteTitle').textContent=D.inviteTitle;
 $('inviteMsg').textContent=D.msg||'';
-function famLine(p,order,name){
-  return p?`<b>${p}</b><span class="rel">의 ${order||''}</span><b>${name}</b>`:`<b>${name}</b>`;
+/* 혼주 한 줄 만들기
+   fa/mo = 아버님·어머님 성함, faLate/moLate = 고인(故) 여부
+   예) 故김아버지 · 박어머니 의 장남 김신랑
+   예전 방식(groomP에 한 줄로 적어둔 경우)도 그대로 지원해요 */
+function parentsText(fa,faLate,mo,moLate,legacy){
+  const parts=[];
+  if(fa)parts.push((faLate?'故 ':'')+fa);
+  if(mo)parts.push((moLate?'故 ':'')+mo);
+  if(parts.length)return parts.join(' · ');
+  return legacy||'';
 }
-$('fam').innerHTML=famLine(D.groomP,D.groomOrder,D.groom)+'<br>'+famLine(D.brideP,D.brideOrder,D.bride);
+function famLine(p,rel,name){
+  if(!p)return `<b>${name}</b>`;
+  /* 관계를 '없음'으로 두면 "김OO · 박OO 의 김신랑" 처럼 관계만 빠져요 */
+  return `<b>${p}</b><span class="rel">의${rel?' '+rel:''}</span><b>${name}</b>`;
+}
+if(secOff('fam')){
+  $('fam').style.display='none';
+}else{
+  const gP=parentsText(D.groomFa,D.groomFaLate,D.groomMo,D.groomMoLate,D.groomP);
+  const bP=parentsText(D.brideFa,D.brideFaLate,D.brideMo,D.brideMoLate,D.brideP);
+  const gLine=famLine(gP,D.groomOrder,D.groom);
+  const bLine=famLine(bP,D.brideOrder,D.bride);
+  $('fam').innerHTML=(BR?bLine:gLine)+'<br>'+(BR?gLine:bLine);
+}
 
 /* 캘린더 */
 $('calMonth').textContent=mo+'월';
@@ -529,7 +711,7 @@ const fmt=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'});
 const today=new Date(fmt.format(new Date())+'T00:00:00+09:00');
 const target=new Date(D.date+'T00:00:00+09:00');
 const diff=Math.round((target-today)/86400000);
-$('dday').innerHTML=diff>0?`${D.groom} ♥ ${D.bride}의 결혼식이 <b>${diff}일</b> 남았습니다`:diff===0?`결혼식이 <b>오늘</b>입니다 🤍`:`축복 속에 결혼식을 무사히 마쳤습니다`;
+$('dday').innerHTML=diff>0?`${N1} ♥ ${N2}의 결혼식이 <b>${diff}일</b> 남았습니다`:diff===0?`결혼식이 <b>오늘</b>입니다 🤍`:`축복 속에 결혼식을 무사히 마쳤습니다`;
 
 /* 오시는 길 */
 $('locName').textContent=D.venue+(D.hall?' '+D.hall:'');
@@ -543,7 +725,12 @@ $('mTmap').addEventListener('click',e=>{
     location.href=`tmap://search?name=${q}`;
   }else{alert('티맵은 휴대폰에서 이용할 수 있어요.');}
 });
-const T=[['①','지하철 이용 시',D.subway],['②','버스 이용 시',D.bus],['③','자가용 이용 시',D.car],['④','전세버스 이용 시',D.charter]];
+/* 사용 안 함으로 꺼둔 섹션 숨기기 */
+if(secOff('invite'))$('inviteSec').style.display='none';
+if(secOff('cal'))$('calSec').style.display='none';
+if(secOff('loc'))$('locSec').style.display='none';
+
+const T=secOff('way')?[]:[['①','지하철 이용 시',D.subway],['②','버스 이용 시',D.bus],['③','자가용 이용 시',D.car],['④','전세버스 이용 시',D.charter]];
 const tw=$('transWrap');
 T.forEach(([n,t,c])=>{
   if(!c)return;
@@ -555,7 +742,7 @@ T.forEach(([n,t,c])=>{
 
 /* 갤러리 */
 if(D.galTitle)$('galTitle').textContent=D.galTitle;else $('galTitle').style.display='none';
-const imgs=(D.gallery||[]).filter(u=>u.trim());
+const imgs=secOff('gal')?[]:(D.gallery||[]).filter(u=>u.trim());
 if(!imgs.length){$('galSec').style.display='none';}
 else{
   const g=$('gal');
@@ -591,11 +778,13 @@ else{
 
 /* 계좌 */
 /* 순서: accOrder가 'bride'면 신부측을 먼저 보여줘요 */
-const accs = D.accOrder==='bride'
+/* accOrder를 따로 정하지 않았으면 위쪽 표기 순서를 그대로 따라가요 */
+const accBrideFirst = D.accOrder ? D.accOrder==='bride' : BR;
+const accs = accBrideFirst
   ? [['신부측',D.accB],['신랑측',D.accG]]
   : [['신랑측',D.accG],['신부측',D.accB]];
 const aw=$('accWrap');let anyAcc=false;
-accs.forEach(([side,list])=>{
+(secOff('acc')?[]:accs).forEach(([side,list])=>{
   if(!list||!list.length)return;anyAcc=true;
   const de=document.createElement('details');de.className='acc-g fu';
   de.innerHTML=`<summary>${side} 계좌번호 보기</summary>`;
@@ -620,7 +809,8 @@ if(!anyAcc)$('accSec').style.display='none';
 
 /* RSVP */
 (function(){
-  const mode=D.rsvpMode==='button'?'inline':(D.rsvpMode||'off'); /* 예전 값(button) 호환 */
+  /* 스위치를 끈 경우 · 예전 값(button/off) 호환 */
+  const mode=secOff('rsvp')?'off':(D.rsvpMode==='button'?'inline':(D.rsvpMode||'off'));
   if(mode==='off')return;
   $('rsvpTitleEl').textContent=D.rsvpTitle||'참석 여부 안내';
   $('rsvpDescEl').textContent=D.rsvpDesc||'귀한 걸음 해주시는 모든 분을 정성껏 모시고자 참석 여부를 여쭙습니다.';
@@ -706,7 +896,9 @@ if(!anyAcc)$('accSec').style.display='none';
 
 /* 게스트 스냅 */
 (function(){
-  if(!D.snapOn)return;
+  /* 예전 데이터는 snapOn 값을, 새 데이터는 스위치 상태를 봐요 */
+  if(D.secOn&&D.secOn.snap!==undefined){ if(!D.secOn.snap)return; }
+  else if(!D.snapOn)return;
   const openDate=D.snapOpenDate;
   const todayKST=new Date(new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul'}).format(new Date())+'T00:00:00+09:00');
   const isOpen=!openDate || new Date(openDate+'T00:00:00+09:00')<=todayKST;
@@ -765,7 +957,7 @@ if(!anyAcc)$('accSec').style.display='none';
 
 /* 푸터 */
 $('footMsg').textContent=D.footMsg||`저희 두 사람의 새로운 시작을\n함께해 주셔서 감사합니다.`;
-$('yr').textContent=`${D.groom} ♥ ${D.bride} · ${y}`;
+$('yr').textContent=`${N1} ♥ ${N2} · ${y}`;
 function copyText(t,okMsg){
   if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>toast(okMsg)).catch(()=>fallbackCopy(t,okMsg));}
   else fallbackCopy(t,okMsg);
