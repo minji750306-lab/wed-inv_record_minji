@@ -124,14 +124,20 @@ header h1 span{color:var(--sage)}
 .hs .mini .load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#b8b2ae}
 .hs .mname{font-size:10.5px;margin-top:5px;text-align:center;color:#8a8f83;line-height:1.3;word-break:keep-all}
 .hs.on .mname{color:var(--ink);font-weight:500}
-/* 갤러리 사용 스위치 (카드 안쪽 작은 버전) */
-.subsw{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:#8a8f83;margin-left:auto}
-.subsw input{position:absolute;opacity:0;width:0;height:0}
-.subsw i{width:34px;height:20px;border-radius:99px;background:#DED7D9;position:relative;transition:background .18s}
-.subsw i::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.subsw input:checked + i{background:var(--sage)}
-.subsw input:checked + i::after{transform:translateX(14px)}
-.lblrow{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+
+/* 갤러리 사용 스위치 — 제목 바로 옆
+   (.f label{display:block} 보다 우선하도록 선택자를 구체적으로 씁니다) */
+.f label.subsw{display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  font-size:11.5px;font-weight:400;color:#8a8f83;margin:0;flex:0 0 auto;
+  -webkit-user-select:none;user-select:none;line-height:1}
+.f label.subsw input[type=checkbox]{position:absolute;opacity:0;width:1px;height:1px;padding:0;margin:0;border:0;pointer-events:none}
+.f label.subsw i{display:block;flex:0 0 32px;width:32px;height:19px;border-radius:99px;background:#DED7D9;position:relative;transition:background .18s}
+.f label.subsw i::after{content:"";position:absolute;top:3px;left:3px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.f label.subsw input:checked + i{background:var(--sage)}
+.f label.subsw input:checked + i::after{transform:translateX(13px)}
+.f label.subsw span{white-space:nowrap;flex:0 0 auto}
+.lblrow{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.f .lblrow > label:first-child{margin:0;flex:0 0 auto}
 .galhint{display:block;font-size:11.5px;color:#9a9590;line-height:1.7;margin-bottom:9px}
 .f.off .thumbs,.f.off .galhint{display:none}
 
@@ -327,7 +333,7 @@ header h1 span{color:var(--sage)}
     </div>
     <div class="f">
       <div class="lblrow">
-        <label style="margin:0">갤러리 사진</label>
+        <label>갤러리 사진</label>
         <label class="subsw"><input type="checkbox" id="galOn"><i></i><span>사용</span></label>
       </div>
       <small class="galhint">여러 장 · 1:1 정방형 비율로 3장씩 보이고, 클릭 시 원본 크기로 보여져요.</small>
