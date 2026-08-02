@@ -213,9 +213,14 @@ header h1 span{color:var(--sage)}
   </div>
 
   <div class="card">
-    <h2><em>🎟️</em>초대 코드 <small>· 코드가 있어야 청첩장을 만들 수 있어요 · 코드 1개당 청첩장 1개, 수정은 무제한 (삭제일 제외)</small></h2>
+    <h2><em>🎟️</em>초대 코드 <small>· 코드 1개당 청첩장 1개, 수정은 무제한 (삭제일 제외)</small></h2>
     <div class="f" style="margin-bottom:0">
       <input id="inviteCode" autocomplete="off" placeholder="발급받은 코드 입력 (예: MJ-A1B2C3)" style="text-transform:uppercase">
+      <div style="font-size:12.5px;color:#8a8f83;line-height:1.9;margin-top:9px">
+        <b>코드 없이도 미리보기까지 자유롭게 해보실 수 있어요.</b> 내 사진과 문구를 넣어 완성된 모습을 확인한 뒤,
+        마음에 들면 그때 코드를 넣고 만들면 돼요. 코드 전에는 사진이 내 브라우저에만 저장되고 서버로 올라가지 않아요.<br>
+        미리보기 화면에는 워터마크가 표시되며, 코드를 넣고 청첩장을 만들면 사라집니다.
+      </div>
     </div>
   </div>
 
@@ -734,7 +739,7 @@ function loadTile(mini){
 function refreshTiles(){
   clearTimeout(_tileTimer);
   _tileTimer=setTimeout(()=>{
-    try{sessionStorage.setItem('wpreview',JSON.stringify(collect()));}catch(e){}
+    setPreviewData(collect());
     _tileSeq++;
     hw.querySelectorAll('.mini').forEach(m=>{
       const r=m.getBoundingClientRect();
@@ -769,7 +774,7 @@ function markTheme(){
     });
     hw.appendChild(row);
   });
-  try{sessionStorage.setItem('wpreview',JSON.stringify(collect()));}catch(e){}
+  setPreviewData(collect());
   markHeroStyle();
 }
 function markHeroStyle(){
@@ -815,6 +820,29 @@ PRESETS.forEach(([name,ink,cream,gold,sage])=>{
   pw.appendChild(b);
 });
 
+/* ── 사진: 코드가 없으면 브라우저 안에서만 보관(미리보기용) ──────────
+   초대 코드를 넣기 전에는 서버에 올리지 않고 data: 주소로 들고 있다가,
+   '청첩장 만들기'를 누를 때 한 번에 서버로 올려요.
+   그래서 코드 없이도 내 사진으로 미리보기를 볼 수 있어요.            */
+const hasCode=()=>/^[A-Za-z0-9-]{4,20}$/.test(($('inviteCode').value||'').trim());
+const isLocal=u=>typeof u==='string'&&u.startsWith('data:');
+/* 미리보기용으로 더 작게 줄인 사본 (저장 공간이 넘치지 않게) */
+function shrink(dataUrl,max){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(Math.max(w,h)>max){const r=max/Math.max(w,h);w=Math.round(w*r);h=Math.round(h*r);}
+      const c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      res(c.toDataURL('image/jpeg',0.7));
+    };
+    img.onerror=()=>res(dataUrl);
+    img.src=dataUrl;
+  });
+}
+async function putLocal(dataUrl){ return await shrink(dataUrl,900); }
+
 /* ── 사진 업로드 ── */
 function compress(file){
   return new Promise((resolve,reject)=>{
@@ -834,8 +862,12 @@ function compress(file){
 }
 async function uploadFile(file){
   const dataUrl=await compress(file);
+  if(!hasCode())return await putLocal(dataUrl);   /* 코드 전 → 브라우저 안에만 */
+  return await uploadDataUrl(dataUrl,file.name);
+}
+async function uploadDataUrl(dataUrl,name){
   const r=await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({dataUrl,name:file.name,code:$('inviteCode').value})});
+    body:JSON.stringify({dataUrl,name:name||'photo.jpg',code:$('inviteCode').value})});
   const j=await r.json();
   if(!r.ok)throw new Error(j.error||'업로드 실패');
   return j.url;
@@ -921,13 +953,10 @@ function applyCrop(){
     t.innerHTML=`<div class="spin">업로드중…</div>`;
     wrap.appendChild(t);
     try{
-      const r=await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({dataUrl,name:'hero.jpg',code:$('inviteCode').value})});
-      const j=await r.json();
-      if(!r.ok)throw new Error(j.error||'업로드 실패');
+      const url = hasCode() ? await uploadDataUrl(dataUrl,'hero.jpg') : await putLocal(dataUrl);
       t.remove();
-      heroUrl=j.url;
-      makeThumb(wrap,j.url,()=>{heroUrl='';save();},true);
+      heroUrl=url;
+      makeThumb(wrap,url,()=>{heroUrl='';save();},true);
       save();
     }catch(e){t.remove();toast('⚠️ '+e.message);}
   });
@@ -1015,10 +1044,39 @@ function collect(){
   d.ogImage=ogUrl;
   return d;
 }
+/* 아직 서버에 올리지 않은 사진(data: 주소)은 용량이 커서
+   본문 자동저장과 따로 보관해요. 이렇게 해야 사진 때문에
+   글자 내용까지 통째로 저장이 실패하는 일이 없어요.            */
+function saveLocalPhotos(d){
+  const p={hero:isLocal(d.hero)?d.hero:'',og:isLocal(d.ogImage)?d.ogImage:'',
+           gal:(d.gallery||[]).map(u=>isLocal(u)?u:'')};
+  try{
+    if(p.hero||p.og||p.gal.some(Boolean))localStorage.setItem('wedit2_photos',JSON.stringify(p));
+    else localStorage.removeItem('wedit2_photos');
+  }catch(e){ /* 공간이 부족하면 사진만 저장이 안 되고 내용은 그대로 남아요 */ }
+}
 function save(){
-  try{localStorage.setItem('wedit2',JSON.stringify(collect()));}catch(e){}
+  const d=collect();
+  saveLocalPhotos(d);
+  /* 본문에는 data: 주소를 빼고 저장 (용량 초과 방지) */
+  const light={...d,
+    hero:isLocal(d.hero)?'':d.hero,
+    ogImage:isLocal(d.ogImage)?'':d.ogImage,
+    gallery:(d.gallery||[]).map(u=>isLocal(u)?'':u)};
+  try{localStorage.setItem('wedit2',JSON.stringify(light));}catch(e){}
   try{renderHeroPrev();}catch(e){}
   if(ogUrl)updateOgPreviewText();
+}
+/* 미리보기에 넘길 데이터 — 공간이 모자라면 갤러리부터 덜어내요 */
+function setPreviewData(d){
+  const tries=[d,
+    {...d,gallery:(d.gallery||[]).filter(u=>!isLocal(u))},
+    {...d,gallery:[],ogImage:isLocal(d.ogImage)?'':d.ogImage},
+    {...d,gallery:[],ogImage:'',hero:isLocal(d.hero)?'':d.hero}];
+  for(const t of tries){
+    try{sessionStorage.setItem('wpreview',JSON.stringify(t));return true;}catch(e){}
+  }
+  return false;
 }
 IDS.forEach(id=>$(id).addEventListener('input',save));
 IDS.forEach(id=>{const e=$(id);if(e.tagName==='SELECT')e.addEventListener('change',save);});
@@ -1030,6 +1088,16 @@ const OG_EXPORT_W=1200,OG_EXPORT_H=630;
 (function restore(){
   let d;try{d=JSON.parse(localStorage.getItem('wedit2'));}catch(e){}
   if(!d){addAccRow('accG');addAccRow('accB');markTheme();return;}
+  /* 아직 서버에 안 올린 사진 되살리기 */
+  try{
+    const p=JSON.parse(localStorage.getItem('wedit2_photos')||'null');
+    if(p){
+      if(p.hero)d.hero=p.hero;
+      if(p.og)d.ogImage=p.og;
+      if(p.gal&&d.gallery)d.gallery=d.gallery.map((u,i)=>u||p.gal[i]||'').filter(Boolean);
+      else if(p.gal&&p.gal.some(Boolean))d.gallery=p.gal.filter(Boolean);
+    }
+  }catch(e){}
   IDS.forEach(id=>{if(d[id]!==undefined)$(id).value=d[id];});
   CHECK_IDS.forEach(id=>{if(d[id]!==undefined)$(id).checked=!!d[id];});
   applySecOn(d.secOn);
@@ -1126,6 +1194,7 @@ $('ogApplyBtn').addEventListener('click',async()=>{
   const dataUrl=canvas.toDataURL('image/jpeg',0.88);
   const btn=$('ogApplyBtn');btn.disabled=true;btn.textContent='저장 중…';
   try{
+    if(!hasCode()){ogUrl=await putLocal(dataUrl);save();updateOgPreviewText();return;}
     const r=await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dataUrl,name:'ogimage',code:$('inviteCode').value})});
     const j=await r.json();
     if(!r.ok)throw new Error(j.error||'업로드에 실패했어요');
@@ -1159,7 +1228,7 @@ function validate(d){
 }
 $('previewBtn').addEventListener('click',()=>{
   const d=collect();if(!validate(d))return;
-  try{sessionStorage.setItem('wpreview',JSON.stringify(d));}catch(e){}
+  setPreviewData(d);
   window.open('/i.html?preview=1','_blank');
 });
 $('makeBtn').addEventListener('click',async()=>{
@@ -1171,6 +1240,26 @@ $('makeBtn').addEventListener('click',async()=>{
   if(rng&&(d.deleteDate<rng.min||d.deleteDate>rng.max)){toast('삭제일은 오늘 이후부터 최대 12개월 이내로 정해주세요');$('deleteDate').focus();return;}
   const btn=$('makeBtn');btn.disabled=true;btn.textContent='만드는 중…';
   try{
+    /* 코드 없이 미리보기하며 넣어둔 사진들을 이제 서버로 올려요 */
+    const pending=[isLocal(d.hero),isLocal(d.ogImage),...(d.gallery||[]).map(isLocal)].filter(Boolean).length;
+    if(pending){
+      btn.textContent=`사진 올리는 중… (0/${pending})`;
+      let done=0;
+      const step=()=>{btn.textContent=`사진 올리는 중… (${++done}/${pending})`;};
+      if(isLocal(d.hero)){d.hero=await uploadDataUrl(d.hero,'hero.jpg');heroUrl=d.hero;step();}
+      if(isLocal(d.ogImage)){d.ogImage=await uploadDataUrl(d.ogImage,'ogimage.jpg');ogUrl=d.ogImage;step();}
+      if(d.gallery&&d.gallery.length){
+        const out=[];
+        for(const u of d.gallery){
+          if(isLocal(u)){out.push(await uploadDataUrl(u,'gallery.jpg'));step();}
+          else out.push(u);
+        }
+        d.gallery=out;galUrls=out;
+      }
+      try{localStorage.removeItem('wedit2_photos');}catch(e){}
+      renderGal();save();
+      btn.textContent='만드는 중…';
+    }
     const r=await fetch('/api/create',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({slug:d.slug,editKey:d.editKey,code:d.inviteCode,data:d})});
     const j=await r.json();

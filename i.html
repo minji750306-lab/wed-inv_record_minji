@@ -66,6 +66,18 @@ img{
   pointer-events:auto;
 }
 .lb img{touch-action:none}
+/* ── 미리보기 워터마크 ──────────────────────────────
+   초대 코드 없이 볼 수 있는 미리보기 화면에만 깔려요.
+   실제로 만든 청첩장(/주소 로 접속)에는 나타나지 않습니다.   */
+#wmark{
+  position:fixed;inset:-10%;z-index:2147483646;
+  pointer-events:none;user-select:none;
+  background-repeat:repeat;
+  background-size:290px 290px;
+  opacity:.30;mix-blend-mode:multiply;
+}
+@media(prefers-color-scheme:dark){#wmark{mix-blend-mode:normal}}
+#wmark.top{z-index:2147483647;opacity:.16;background-size:190px 190px}
 /* 표지 타일 미리보기 모드 — 표지 한 장만 보여줘요 */
 /* 표지 높이는 원래 비율 그대로 두고, 짧은 표지는 배경색으로 채워요 */
 #app.tilemode{box-shadow:none;min-height:700px;background:var(--cream)}
@@ -498,6 +510,53 @@ const CREDIT_URL  = 'https://blog.naver.com/record_minji';  /* ← 출처 링크
     c.appendChild(a);
   }else{c.textContent=CREDIT_TEXT;}
 }
+
+/* ── 미리보기 워터마크 심기 ── */
+(function(){
+  const qs=new URLSearchParams(location.search);
+  if(!qs.get('preview'))return;          /* 실제 청첩장에는 안 붙어요 */
+  if(qs.get('tile')==='1')return;        /* 표지 고르는 작은 타일은 제외 */
+
+  const TEXT='밍지로움 청첩장 미리보기';
+  function tile(size,font,alpha){
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">`+
+      `<g transform="rotate(-30 ${size/2} ${size/2})" fill="rgba(74,50,56,${alpha})" `+
+      `font-family="'Noto Sans KR',sans-serif" font-size="${font}" font-weight="500">`+
+      `<text x="8" y="${size*0.32}">${TEXT}</text>`+
+      `<text x="${-size*0.5}" y="${size*0.82}">${TEXT}</text>`+
+      `</g></svg>`;
+    return 'url("data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svg)))+'")';
+  }
+  function make(cls,size,font,alpha){
+    const el=document.createElement('div');
+    el.id='wmark';
+    if(cls)el.className=cls;
+    el.style.backgroundImage=tile(size,font,alpha);
+    return el;
+  }
+  const layers=[[null,290,17,1],['top',190,12,.85]];
+  function plant(){
+    document.querySelectorAll('#wmark').forEach(e=>e.remove());
+    layers.forEach(([c,s,f,a])=>document.body.appendChild(make(c,s,f,a)));
+  }
+  plant();
+  /* 지워지거나 숨겨지면 다시 심어요 */
+  new MutationObserver(()=>{
+    if(document.querySelectorAll('#wmark').length<layers.length)plant();
+  }).observe(document.body,{childList:true,subtree:false});
+  setInterval(()=>{
+    const ws=document.querySelectorAll('#wmark');
+    if(ws.length<layers.length)return plant();
+    ws.forEach(w=>{
+      const st=getComputedStyle(w);
+      if(st.display==='none'||st.visibility==='hidden'||parseFloat(st.opacity)<0.08||!w.style.backgroundImage)plant();
+    });
+  },1200);
+  /* 인쇄·저장 시에도 함께 나오도록 */
+  const ps=document.createElement('style');
+  ps.textContent='@media print{#wmark{display:block!important;opacity:.34!important}}';
+  document.head.appendChild(ps);
+})();
 
 /* ── 데이터 불러오기 ──
    1) /i.html?id=주소  → 저장소(API)에서 불러오기 (기본)
