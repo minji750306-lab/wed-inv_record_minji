@@ -52,6 +52,11 @@ header h1 span{color:var(--sage)}
 .f input,.f textarea{min-width:0;max-width:100%;-webkit-appearance:none;appearance:none}
 .f input[type=date],.f input[type=time]{display:block;width:100%;min-height:46px;text-align:left;-webkit-appearance:none}
 .f textarea{resize:vertical;min-height:96px;line-height:1.9}
+/* 표지 영문명 글자 크기 조절 */
+.namesize-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--cream)}
+.namesize-row input[type=range]{flex:1;width:auto;min-width:0;border:0;padding:0;background:transparent;min-height:24px;-webkit-appearance:auto;appearance:auto;accent-color:var(--sage)}
+.namesize-row output{min-width:72px;text-align:center;font-size:12.5px;font-weight:500;color:var(--ink);white-space:nowrap}
+.namesize-row button{border:1px solid var(--line);background:#fff;color:#8a8f83;border-radius:999px;padding:6px 10px;font-size:11.5px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}}
 /* 사용/미사용 스위치 */
@@ -240,6 +245,15 @@ header h1 span{color:var(--sage)}
       <div class="f"><label>신부 이름</label><input id="bride" placeholder="이신부"></div>
       <div class="f"><label>신랑 영문 이름 <small>비우면 한글 이름 표시</small></label><input id="groomEn" placeholder="Sin Rang"></div>
       <div class="f"><label>신부 영문 이름 <small>비우면 한글 이름 표시</small></label><input id="brideEn" placeholder="Sin Bu"></div>
+    </div>
+    <div class="f" style="margin-bottom:0">
+      <label>표지 영문명 글자 크기 <small>· 조절하지 않으면 디자인 기본 크기(100%)</small></label>
+      <div class="namesize-row">
+        <input id="heroNameScale" type="range" min="50" max="160" step="5" value="100" aria-label="표지 영문명 글자 크기">
+        <output id="heroNameScaleVal" for="heroNameScale">기본 100%</output>
+        <button type="button" id="heroNameScaleReset">기본</button>
+      </div>
+      <small style="display:block;color:#9a9590;font-size:11.5px;line-height:1.7;margin-top:7px">영문 이름이 표시되는 기본형 · 라인형 · 미니멀형 · 필기체형 표지에 적용돼요.</small>
     </div>
   </div>
 
@@ -539,7 +553,7 @@ const CREDIT_LINK_LABEL = '🔗 네이버 블로그 바로가기';  /* ← 링�
     pl.style.cssText='display:block;margin-top:3px;color:#C9A6AE';
   }else{pl.remove();}
 }
-const IDS=['groom','bride','groomEn','brideEn','nameOrder',
+const IDS=['groom','bride','groomEn','brideEn','heroNameScale','nameOrder',
 'groomFa','groomMo','brideFa','brideMo','groomRel','brideRel','groomOrder','brideOrder',
 'date','time','venue','hall','addr','lead','inviteTitle','galTitle','msg','footMsg',
 'subway','bus','car','charter','slug','editKey','accOrder','deleteDate','inviteCode','heroStyle',
@@ -1078,6 +1092,16 @@ function setPreviewData(d){
   }
   return false;
 }
+function syncHeroNameScale(){
+  const v=Number($('heroNameScale').value)||100;
+  $('heroNameScaleVal').textContent=v===100?'기본 100%':v+'%';
+}
+$('heroNameScale').addEventListener('input',syncHeroNameScale);
+$('heroNameScaleReset').addEventListener('click',()=>{
+  $('heroNameScale').value='100';
+  syncHeroNameScale();
+  save();
+});
 IDS.forEach(id=>$(id).addEventListener('input',save));
 IDS.forEach(id=>{const e=$(id);if(e.tagName==='SELECT')e.addEventListener('change',save);});
 CHECK_IDS.forEach(id=>$(id).addEventListener('change',save));
@@ -1087,7 +1111,7 @@ const OG_EXPORT_W=1200,OG_EXPORT_H=630;
 
 (function restore(){
   let d;try{d=JSON.parse(localStorage.getItem('wedit2'));}catch(e){}
-  if(!d){addAccRow('accG');addAccRow('accB');markTheme();return;}
+  if(!d){addAccRow('accG');addAccRow('accB');syncHeroNameScale();markTheme();return;}
   /* 아직 서버에 안 올린 사진 되살리기 */
   try{
     const p=JSON.parse(localStorage.getItem('wedit2_photos')||'null');
@@ -1099,6 +1123,7 @@ const OG_EXPORT_W=1200,OG_EXPORT_H=630;
     }
   }catch(e){}
   IDS.forEach(id=>{if(d[id]!==undefined)$(id).value=d[id];});
+  syncHeroNameScale();
   CHECK_IDS.forEach(id=>{if(d[id]!==undefined)$(id).checked=!!d[id];});
   applySecOn(d.secOn);
   applyRel('groomOrder','groomRel',d.groomOrder);
