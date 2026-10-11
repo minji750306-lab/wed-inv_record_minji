@@ -1,3 +1,4 @@
+import { publicInvitation } from '../lib/public-invitation.js';
 import { put, head } from '@vercel/blob';
 
 export default async function handler(req, res) {
@@ -20,6 +21,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: '삭제일은 오늘 이후부터 최대 12개월 이내로 정해주세요.' });
     }
 
+    const cleanData = publicInvitation(data);
     const path = `inv/${slug}.json`;
 
     // 기존 청첩장 확인
@@ -31,9 +33,8 @@ export default async function handler(req, res) {
       const prev = await (await fetch(exists.url)).json();
       if (prev.editKey !== editKey)
         return res.status(409).json({ error: '이미 사용 중인 주소예요. (본인 청첩장이면 처음 정한 수정 비밀번호를 입력하세요)' });
-      if (prev.data && prev.data.deleteDate) data.deleteDate = prev.data.deleteDate;
-      if (prev.code) data._code = prev.code;
-      await put(path, JSON.stringify({ editKey, code: prev.code || null, data, updated: Date.now() }), {
+      if (prev.data && prev.data.deleteDate) cleanData.deleteDate = prev.data.deleteDate;
+      await put(path, JSON.stringify({ editKey, code: prev.code || null, data: cleanData, updated: Date.now() }), {
         access: 'public', contentType: 'application/json',
         addRandomSuffix: false, allowOverwrite: true, cacheControlMaxAge: 0
       });
@@ -54,7 +55,7 @@ export default async function handler(req, res) {
 
     // ── 순서 변경: 청첩장 데이터를 먼저 저장하고, 성공한 뒤에만 코드를 사용 처리 ──
     // 이렇게 하면 저장 중간에 실패해도 코드가 "사용됨"으로 잘못 남는 일이 없음
-    await put(path, JSON.stringify({ editKey, code: codeUp, data, updated: Date.now() }), {
+    await put(path, JSON.stringify({ editKey, code: codeUp, data: cleanData, updated: Date.now() }), {
       access: 'public', contentType: 'application/json',
       addRandomSuffix: false, allowOverwrite: true, cacheControlMaxAge: 0
     });

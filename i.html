@@ -588,6 +588,10 @@ async function loadData(){
   }
   if(id){
     SLUG=id;
+    const embedded=document.getElementById('invitation-data');
+    if(embedded){
+      try{return JSON.parse(embedded.textContent);}catch(e){}
+    }
     try{
       const r=await fetch('/api/get?id='+encodeURIComponent(id));
       if(!r.ok)return null;
